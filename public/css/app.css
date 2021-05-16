@@ -11853,8 +11853,13 @@ a.text-dark:focus {
   -webkit-clip-path: polygon(100% 0%, 0 0%, 50% 100%);
           clip-path: polygon(100% 0%, 0 0%, 50% 100%);
   position: relative;
-  top: 10px;
+  top: 8px;
   right: 10px;
+}
+
+.dashboard-page .content .my-container .body .categories-page .add-category .add-category-form .select select,
+.dashboard-page .content .my-container .body .category-page .add-category .add-category-form .select select {
+  pointer-events: none;
 }
 
 .dashboard-page .content .my-container .body .categories-page .add-category .add-category-form .select .parent-group-input,
@@ -11894,9 +11899,21 @@ a.text-dark:focus {
   transition: all 0.5s ease-in-out;
 }
 
+.dashboard-page .content .my-container .body .categories-page .add-category .add-category-form .select .parent-group-input-ui .options .option,
+.dashboard-page .content .my-container .body .category-page .add-category .add-category-form .select .parent-group-input-ui .options .option {
+  padding: 5px;
+}
+
+.dashboard-page .content .my-container .body .categories-page .add-category .add-category-form .select .parent-group-input-ui .options .option:hover,
+.dashboard-page .content .my-container .body .categories-page .add-category .add-category-form .select .parent-group-input-ui .options .option.active,
+.dashboard-page .content .my-container .body .category-page .add-category .add-category-form .select .parent-group-input-ui .options .option:hover,
+.dashboard-page .content .my-container .body .category-page .add-category .add-category-form .select .parent-group-input-ui .options .option.active {
+  background-color: #e5e5e5;
+}
+
 .dashboard-page .content .my-container .body .categories-page .add-category .add-category-form .select .parent-group-input-ui.show .selected-option,
 .dashboard-page .content .my-container .body .category-page .add-category .add-category-form .select .parent-group-input-ui.show .selected-option {
-  height: 0;
+  display: none;
 }
 
 .dashboard-page .content .my-container .body .categories-page .add-category .add-category-form .select .parent-group-input-ui.show .options,

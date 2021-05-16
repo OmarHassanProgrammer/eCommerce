@@ -143,8 +143,11 @@
                     justify-self: end;
                     clip-path: polygon(100% 0%, 0 0%, 50% 100%);
                     position: relative;
-                    top: 10px;
+                    top: 8px;
                     right: 10px
+                }
+                select {
+                    pointer-events: none;
                 }
                 .parent-group-input {
                     opacity: 0;
@@ -171,10 +174,16 @@
                     .options {
                         height: 0;
                         transition: all .5s ease-in-out;
+                        .option {
+                            padding: 5px;
+                            &:hover, &.active {
+                                background-color: #e5e5e5
+                            }
+                        }
                     }
                     &.show {
                         .selected-option {
-                            height: 0;
+                            display: none;
                         }
                         .options {
                             height: auto;

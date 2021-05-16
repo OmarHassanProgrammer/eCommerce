@@ -88723,10 +88723,19 @@ function AddCategory(props) {
       setCategories = _useState2[1],
       categoriesRef = _useState2[2];
 
-  var _useState3 = react_usestateref__WEBPACK_IMPORTED_MODULE_3___default()(""),
-      _useState4 = _slicedToArray(_useState3, 2),
+  var _useState3 = react_usestateref__WEBPACK_IMPORTED_MODULE_3___default()("show"),
+      _useState4 = _slicedToArray(_useState3, 3),
       selectInputStatues = _useState4[0],
-      setSelectInputStatues = _useState4[1];
+      setSelectInputStatues = _useState4[1],
+      selectInputStatuesRef = _useState4[2];
+
+  var _useState5 = react_usestateref__WEBPACK_IMPORTED_MODULE_3___default()({
+    id: 0,
+    name: "None"
+  }),
+      _useState6 = _slicedToArray(_useState5, 2),
+      selectedOption = _useState6[0],
+      setSelectedOption = _useState6[1];
 
   var history = Object(react_router_dom__WEBPACK_IMPORTED_MODULE_4__["useHistory"])();
   var alert = Object(react_alert__WEBPACK_IMPORTED_MODULE_7__["useAlert"])();
@@ -88769,15 +88778,13 @@ function AddCategory(props) {
                   setCategories(response.data.data);
 
                   for (var category in categories) {
-                    if (parent_id !== 0) {
-                      for (var _category in categories) {
-                        if (_category.id === parent_id) {
-                          console.log(getCategories(_category.id));
-                          _category.subCategories = getCategories(_category.id);
-                        }
-                      }
+                    if (category.id === parent_id) {
+                      console.log(getCategories(category.id));
+                      category.subCategories = getCategories(category.id);
                     }
                   }
+
+                  return response;
                 })["catch"](function (error) {
                   console.log(error.response);
                 });
@@ -88796,11 +88803,19 @@ function AddCategory(props) {
   }, []);
 
   var handleSelectInputStatues = function handleSelectInputStatues() {
-    if (selectInputStatues == "") {
+    if (selectInputStatues === "") {
       setSelectInputStatues("show");
     } else {
       setSelectInputStatues("");
     }
+  };
+
+  var handleSelectedOption = function handleSelectedOption(e) {
+    setSelectedOption({
+      id: e.target.getAttribute("value"),
+      name: e.target.getAttribute("optionName")
+    });
+    console.log(e.target.getAttribute("value"));
   };
 
   var form = function form(props) {
@@ -88839,22 +88854,26 @@ function AddCategory(props) {
         key: index
       });
     }) : ""), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
-      className: "parent-group-input-ui " + setSelectInputStatues,
-      onClick: handleSelectInputStatues()
+      className: "parent-group-input-ui " + selectInputStatues,
+      onClick: handleSelectInputStatues
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
       className: "selected-option",
-      value: "0"
-    }, "None"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+      value: selectedOption.id
+    }, selectedOption.name), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
       className: "options"
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
-      className: "option",
-      value: "0"
+      className: "option " + (selectedOption.id == 0 ? "active" : ""),
+      value: "0",
+      optionName: "None",
+      onClick: handleSelectedOption
     }, "None"), categories !== [] ? categories.map(function (category, index) {
       return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
-        className: "option",
+        className: "option " + (selectedOption.id == category.id ? "active" : ""),
         value: category.id,
-        key: index
-      }, category.name);
+        optionName: category.name,
+        key: index,
+        onClick: handleSelectedOption
+      }, category.name, " ");
     }) : ""))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("input", {
       className: "add-category-btn",
       type: "submit",

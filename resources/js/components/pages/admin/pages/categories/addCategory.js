@@ -10,7 +10,8 @@ import {AuthContext} from "../../../../contexts/AuthContext";
 
 export default function AddCategory(props) {
     const [categories, setCategories, categoriesRef] = useState([]);
-    const [selectInputStatues, setSelectInputStatues] = useState("");
+    const [selectInputStatues, setSelectInputStatues, selectInputStatuesRef] = useState("show");
+    const [selectedOption, setSelectedOption] = useState({id: 0,name: "None"});
     let history = useHistory();
     const alert = useAlert();
     const authContext = useContext(AuthContext);
@@ -44,15 +45,12 @@ export default function AddCategory(props) {
                     console.log(response.data.data);
                     setCategories(response.data.data);
                     for (let category in categories) {
-                        if(parent_id !== 0) {
-                            for (let category in categories) {
-                                if(category.id === parent_id) {
-                                    console.log(getCategories(category.id));
-                                    category.subCategories = getCategories(category.id);
-                                }
-                            }
+                        if(category.id === parent_id) {
+                            console.log(getCategories(category.id));
+                            category.subCategories = getCategories(category.id);
                         }
                     }
+                    return response;
                 })
                 .catch(error => {
                     console.log(error.response);
@@ -62,11 +60,19 @@ export default function AddCategory(props) {
     }, []);
 
     let handleSelectInputStatues = () => {
-        if(selectInputStatues == "") {
+        if(selectInputStatues === "") {
             setSelectInputStatues("show");
         } else {
             setSelectInputStatues("");
         }
+    }
+
+    let handleSelectedOption = (e) => {
+        setSelectedOption({
+            id: e.target.getAttribute("value"),
+            name: e.target.getAttribute("optionName")
+        });
+        console.log(e.target.getAttribute("value"));
     }
 
     let form = (props) => {
@@ -94,14 +100,14 @@ export default function AddCategory(props) {
                             )) : ""
                     }
                 </select>
-                <div className={"parent-group-input-ui " + setSelectInputStatues} onClick={handleSelectInputStatues()}>
-                    <div className="selected-option" value="0">None</div>
+                <div className={"parent-group-input-ui " + selectInputStatues} onClick={handleSelectInputStatues}>
+                    <div className="selected-option" value={selectedOption.id}>{selectedOption.name}</div>
                     <div className="options">
-                        <div className="option" value="0" >None</div>
+                        <div className={"option " + (selectedOption.id == 0?"active":"")} value="0" optionName="None" onClick={handleSelectedOption} >None</div>
                         {
                             categories !== []?
                                 categories.map((category, index) => (
-                                    <div className="option" value={category.id} key={index} >{category.name}</div>
+                                    <div className={"option " + (selectedOption.id == category.id?"active":"")} value={category.id} optionName={category.name} key={index} onClick={handleSelectedOption}>{category.name} </div>
                                 )) : ""
                         }
                     </div>
