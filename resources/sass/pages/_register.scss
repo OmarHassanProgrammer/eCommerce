@@ -1,0 +1,161 @@
+.register-page {
+    background-image: linear-gradient($red1, $red2);
+    min-height: 100vh;
+
+    .register-form {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #fff;
+        padding: 20px;
+        border-radius: 20px;
+        box-shadow: 1px 1px 3px #eee;
+
+        .title {
+            color: #555;
+            font-weight: normal;
+            font-size: 2rem;
+        }
+
+        form {
+            padding-top: 15px;
+            width: 500px;
+
+            input, a {
+                border-radius: 20px;
+                padding: 15px;
+                border: none;
+                display: block;
+                margin-bottom: 5px;
+
+                &:focus {
+                    outline: none;
+                }
+
+                &:not([type="submit"]) {
+                    border: .5px solid #aaa;
+                    padding-left: 25px;
+                    font-size: .9rem;
+                }
+
+                &[type="submit"], &.login-btn {
+                    text-decoration: none;
+                    text-align: center;
+                    cursor: pointer;
+                    color: #e5e5e5;
+                    font-weight: bold;
+                    font-size: 1.1rem;
+                    transition: all .5s ease-in-out;
+                    &.disabled {
+                        opacity: .4;
+                    }
+                }
+                &:not([type="checkbox"]) {
+                    width: 100%;
+                }
+                &[type="checkbox"] {
+                    margin-left: 10px;
+                    margin-right: 5px;
+                    display: inline-block;
+                }
+            }
+            .checkbox-label {
+                color: #333333;
+                .fake-link {
+                    color: #0645AD;
+                    cursor: pointer;
+                    &:hover {
+                        text-decoration: underline;
+                    }
+                }
+            }
+
+            .fields {
+                display: flex;
+                .field {
+                    width: 50%;
+                    &:first-child {
+                        margin-right: 5px;
+                    }
+                }
+            }
+
+            .error {
+                color: $red;
+                font-weight: 500;
+                font-size: .9rem;
+                display: block;
+                text-align: center;
+                padding-bottom: 6px
+            }
+
+            .buttons {
+                display: flex;
+                .register-btn {
+                    background: $red1 ;
+                    margin-right: 5px;
+                    &:hover:not(:disabled), &:focus:not(:disabled) {
+                        background: $red2;
+                    }
+                    &:disabled {
+                        cursor: no-drop;
+                    }
+                }
+
+                .login-btn {
+                    background: $red1;
+
+                    &:hover, &:focus {
+                        background: $red2;
+                    }
+                }
+            }
+
+            .reset-password {
+                background: $orange1;
+
+                &:hover, &:focus {
+                    background: $orange2;
+                }
+            }
+        }
+
+        button {
+            width: 100%;
+            border-radius: 20px;
+            padding: 15px;
+            border: none;
+            display: block;
+            margin-bottom: 5px;
+            cursor: pointer;
+            color: #e5e5e5;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: all .5s ease-in-out;
+        }
+
+        .login-google {
+            background: $google1;
+
+            &:hover, &:focus {
+                background: $google2;
+            }
+        }
+
+        .login-facebook {
+            background: $facebook1;
+
+            &:hover, &:focus {
+                background: $facebook2;
+            }
+        }
+
+        .line {
+            height: 2px;
+            width: 100%;
+            margin: 10px auto;
+            background-color: #ddd;
+        }
+    }
+}

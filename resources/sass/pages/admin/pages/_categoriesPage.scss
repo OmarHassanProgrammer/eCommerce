@@ -1,0 +1,214 @@
+
+.categories-page, .category-page {
+    .categories {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        .category {
+            width: 24%;
+            display: inline-block;
+            background-color: #f9fcff;
+            margin-bottom: 20px;
+            padding: 40px 10px;
+            border-radius: 10px;
+            height: 250px;
+            text-align: center;
+            position: relative;
+            cursor: pointer;
+            transition: .5s ease-in-out;
+            .image {
+                width: 110px;
+                height: 110px;
+                background-color: #eee;
+                border-radius: 50%;
+                margin: auto;
+                border: #eee 1px solid;
+                padding: 10px;
+            }
+            .name {
+                margin-top: 10px;
+                font-size: 1.25rem;
+                font-weight: bold;
+                color: #333
+            }
+            & > a {
+                color: #00000099;
+                &:before {
+                    content: "";
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                }
+                &:hover {
+                    color: inherit;
+                    text-decoration: none;
+                }
+            }
+            &.add-category {
+                padding: 50px 0;
+                background-color: #f9fcffdd;
+                transition: .5s ease-in-out;
+                cursor: pointer;
+                &:hover {
+                    background-color: #f9fcff;
+                }
+
+            }
+            .add-btn {
+                font-size: 6em;
+            }
+            &:hover:not(.add-category) {
+                transform: translateY(-5px);
+            }
+            &:not(:nth-child(4n)) {
+                margin-right: calc(4% / 3);
+            }
+        }
+    }
+    .add-category {
+        .add-category-form {
+            background-color: #f9fcff;
+            padding: 20px 20px 10px;
+            border-radius: 4px;
+            width: 100%;
+            .title {
+                text-align: center;
+                margin-bottom: 20px;
+            }
+            .name-input-container {
+                width: 61.5%;
+                .name-input {
+                    width: 100%;
+                    border-radius: 20px;
+                    padding: 15px;
+                    border: none;
+                    display: block;
+                    margin-bottom: 5px;
+
+                    &:focus {
+                        outline: none;
+                    }
+
+                    &:not([type="submit"]) {
+                        border: .5px solid #aaa;
+                        padding-left: 25px;
+                        font-size: .9rem;
+                    }
+
+                    &[type="submit"], &.register-btn {
+                        text-decoration: none;
+                        text-align: center;
+                        cursor: pointer;
+                        color: #e5e5e5;
+                        font-weight: bold;
+                        font-size: 1.1rem;
+                        transition: all .5s ease-in-out;
+                    }
+                }
+                .error {
+                    color: $red;
+                    font-weight: 500;
+                    font-size: .9rem;
+                    display: block;
+                    text-align: center;
+                    padding-bottom: 6px
+                }
+            }
+            .select {
+                width: 61.5%;
+                border-radius: 20px;
+                padding: 15px;
+                border: none;
+                cursor: pointer;
+                background-color: #fff;
+                margin-bottom: 5px;
+                background-image: linear-gradient(to top, #f9f9f9, #fff 33%);
+                display: grid;
+                grid-template-areas: "select";
+                align-items: flex-start;
+                position: relative;
+                &:not([type="submit"]) {
+                    border: .5px solid #aaa;
+                    padding-left: 25px;
+                    font-size: .9rem;
+                }
+                &::after {
+                    content: "";
+                    width: 15px;
+                    height: 10px;
+                    background-color: #777;
+                    grid-area: select;
+                    justify-self: end;
+                    clip-path: polygon(100% 0%, 0 0%, 50% 100%);
+                    position: relative;
+                    top: 10px;
+                    right: 10px
+                }
+                .parent-group-input {
+                    opacity: 0;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                }
+                .parent-group-input-ui {
+                    appearance: none;
+                    background-color: transparent;
+                    border: none;
+                    width: 100%;
+                    grid-area: select;
+                    font-family: inherit;
+                    font-size: inherit;
+                    cursor: inherit;
+                    line-height: inherit;
+                    overflow: hidden;
+                    .selected-option {
+                        transition: all .5s ease-in-out;
+                    }
+                    .options {
+                        height: 0;
+                        transition: all .5s ease-in-out;
+                    }
+                    &.show {
+                        .selected-option {
+                            height: 0;
+                        }
+                        .options {
+                            height: auto;
+                        }
+                    }
+                    &::-ms-expand {
+                        display: none;
+                    }
+                    &:focus {
+                        outline: none;
+                    }
+                }
+            }
+            .add-category-btn {
+                text-decoration: none;
+                text-align: center;
+                cursor: pointer;
+                color: #e5e5e5;
+                font-weight: bold;
+                font-size: 1.1rem;
+                transition: all .5s ease-in-out;
+                width: 100%;
+                border-radius: 20px;
+                padding: 15px;
+                border: none;
+                display: block;
+                margin-top: 10px;
+                margin-bottom: 5px;
+                background: $blue1;
+                margin-right: 5px;
+                &:hover, &:focus {
+                    background: $blue2;
+                }
+            }
+        }
+    }
+}

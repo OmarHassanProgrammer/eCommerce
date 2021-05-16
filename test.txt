@@ -1,0 +1,15 @@
+HTTP/1.0 200 OK
+Cache-Control: no-cache, private
+Content-Type:  application/json
+Date:          Fri, 30 Oct 2020 16:37:35 GMT
+
+{"status":false,"errNum":"","msg":"There is a problem with your token"}GET /api/auth/user/me?api_password=e8tGHfbfIwJ5Yp0XNpK21QIHFAC HTTP/1.1
+Accept:          application/json
+Accept-Encoding: gzip, deflate
+Accept-Language: en,en-US;q=0.9,ar;q=0.8
+Connection:      keep-alive
+Host:            ecommerce.local
+Origin:          http://localhost:3000
+Referer:         http://localhost:3000/
+User-Agent:      Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36
+

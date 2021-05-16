@@ -1,0 +1,69 @@
+.home-page {
+    .new-users, .new-traders {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 0.75rem 1rem;
+        margin-bottom: 1rem;
+        list-style: none;
+        background-color: #f9fcff;
+        border-radius: 0.25rem;
+        .new-users-header, .new-traders-header {
+            position: relative;
+            width: 100%;
+            padding-bottom: 5px;
+            &:after {
+                content: "";
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                height: 1px;
+                background-color: #aaaaaa;
+            }
+            .title {
+                margin: 0 0 10px 10px;
+                display: inline-block;
+            }
+            .seemore {
+                margin: 10px 20px 0 0;
+                float: right;
+            }
+        }
+        .new-users-list, .new-traders-list {
+            list-style: none;
+            padding-top: 25px;
+            padding-left: 0;
+            width: 100%;
+            .new-user, .new-trader {
+                width: 10%;
+                text-align: center;
+                .image {
+                    width: 100%;
+                    position: relative;
+                    background-color: #eee;
+                    border-radius: 50%;
+                    margin: auto;
+                    border: #eee 1px solid;
+                    &:before {
+                        content: "";
+                        display: block;
+                        padding-top: 100%;
+                    }
+                    .image-content {
+                        position:  absolute;
+                        top: 0;
+                        left: 0;
+                        bottom: 0;
+                        right: 0;
+                    }
+                }
+                .name {
+                    margin-top: 5px;
+                    font-size: .8rem;
+                    font-weight: bold;
+                    color: #333
+                }
+            }
+        }
+    }
+}

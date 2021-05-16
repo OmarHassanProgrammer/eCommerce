@@ -1,0 +1,129 @@
+.login-page {
+    background-image: linear-gradient($blue1, $blue2);
+    min-height: 100vh;
+
+    .login-form {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: #fff;
+        padding: 20px;
+        border-radius: 20px;
+        box-shadow: 1px 1px 3px #eee;
+
+        .title {
+            color: #555;
+            font-weight: normal;
+            font-size: 2rem;
+        }
+
+        form {
+            padding-top: 15px;
+            width: 500px;
+
+            input, a {
+                width: 100%;
+                border-radius: 20px;
+                padding: 15px;
+                border: none;
+                display: block;
+                margin-bottom: 5px;
+
+                &:focus {
+                    outline: none;
+                }
+
+                &:not([type="submit"]) {
+                    border: .5px solid #aaa;
+                    padding-left: 25px;
+                    font-size: .9rem;
+                }
+
+                &[type="submit"], &.register-btn {
+                    text-decoration: none;
+                    text-align: center;
+                    cursor: pointer;
+                    color: #e5e5e5;
+                    font-weight: bold;
+                    font-size: 1.1rem;
+                    transition: all .5s ease-in-out;
+                }
+            }
+
+            .error {
+                color: $red;
+                font-weight: 500;
+                font-size: .9rem;
+                display: block;
+                text-align: center;
+                padding-bottom: 6px
+            }
+
+            .buttons {
+                display: flex;
+
+                .login-btn {
+                    background: $blue1;
+                    margin-right: 5px;
+                    &:hover, &:focus {
+                        background: $blue2;
+                    }
+                }
+                .register-btn {
+                    background: $blue1;
+
+                    &:hover, &:focus {
+                        background: $blue2;
+                    }
+                }
+
+            }
+
+            .reset-password {
+                background: $blue1;
+
+                &:hover, &:focus {
+                    background: $blue2;
+                }
+            }
+        }
+
+        button {
+            width: 100%;
+            border-radius: 20px;
+            padding: 15px;
+            border: none;
+            display: block;
+            margin-bottom: 5px;
+            cursor: pointer;
+            color: #e5e5e5;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: all .5s ease-in-out;
+        }
+
+        .login-google {
+            background: $google1;
+
+            &:hover, &:focus {
+                background: $google2;
+            }
+        }
+
+        .login-facebook {
+            background: $facebook1;
+
+            &:hover, &:focus {
+                background: $facebook2;
+            }
+        }
+
+        .line {
+            height: 2px;
+            width: 100%;
+            margin: 10px auto;
+            background-color: #ddd;
+        }
+    }
+}

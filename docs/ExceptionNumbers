@@ -1,0 +1,7 @@
+E001: General Error
+E002: Invalid API Password
+E100: Invalid Token
+E101: Expired Token
+E102: Error In Token
+E200: Invalid Email Or Password
+E201: Not Authenticated

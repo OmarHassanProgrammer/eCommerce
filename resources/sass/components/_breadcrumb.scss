@@ -1,0 +1,9 @@
+.readcrumb-container {
+  --bs-breadcrumb-divider: '>';
+  margin-bottom: 30px;
+  .breadcrumb {
+    background-color: #f9fcff;
+    margin: 0;
+    padding-left: 25px;
+  }
+}
