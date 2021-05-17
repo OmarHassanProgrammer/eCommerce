@@ -88752,12 +88752,12 @@ function AddCategory(props) {
 
     var _token = localStorage.getItem('_token');
 
-    function getCategories(_x) {
+    function getCategories(_x, _x2) {
       return _getCategories.apply(this, arguments);
     }
 
     function _getCategories() {
-      _getCategories = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(parent_id) {
+      _getCategories = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(parent_id, start) {
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
@@ -88774,17 +88774,20 @@ function AddCategory(props) {
                   },
                   method: "GET"
                 }).then(function (response) {
-                  console.log(response.data.data);
-                  setCategories(response.data.data);
+                  //console.log(parent_id, response.data.data);
+                  if (start) setCategories(response.data.data);
 
-                  for (var category in categories) {
-                    if (category.id === parent_id) {
-                      console.log(getCategories(category.id));
-                      category.subCategories = getCategories(category.id);
-                    }
+                  if (response.data.data.length === 0) {
+                    console.log("empty/");
+                    return "ss";
+                  } else {
+                    response.data.data.map(function (category, index) {
+                      console.log(category);
+                      category['subCategories'] = getCategories(category.id); // let subCategories = async function () {return await getCategories(category.id)};
+                      // console.log(category.id, subCategories());
+                    });
+                    return response.data.data;
                   }
-
-                  return response;
                 })["catch"](function (error) {
                   console.log(error.response);
                 });
@@ -88799,7 +88802,7 @@ function AddCategory(props) {
       return _getCategories.apply(this, arguments);
     }
 
-    getCategories(0);
+    getCategories(0, true);
   }, []);
 
   var handleSelectInputStatues = function handleSelectInputStatues() {
@@ -88813,7 +88816,7 @@ function AddCategory(props) {
   var handleSelectedOption = function handleSelectedOption(e) {
     setSelectedOption({
       id: e.target.getAttribute("value"),
-      name: e.target.getAttribute("optionName")
+      name: e.target.getAttribute("optionname")
     });
     console.log(e.target.getAttribute("value"));
   };
@@ -88864,13 +88867,13 @@ function AddCategory(props) {
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
       className: "option " + (selectedOption.id == 0 ? "active" : ""),
       value: "0",
-      optionName: "None",
+      optionname: "None",
       onClick: handleSelectedOption
     }, "None"), categories !== [] ? categories.map(function (category, index) {
       return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
         className: "option " + (selectedOption.id == category.id ? "active" : ""),
         value: category.id,
-        optionName: category.name,
+        optionname: category.name,
         key: index,
         onClick: handleSelectedOption
       }, category.name, " ");
@@ -88887,7 +88890,7 @@ function AddCategory(props) {
     });
   };
 
-  function onSubmit(_x2) {
+  function onSubmit(_x3) {
     return _onSubmit.apply(this, arguments);
   }
 

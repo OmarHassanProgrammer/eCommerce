@@ -29,7 +29,7 @@ export default function AddCategory(props) {
         const baseUrl = localStorage.getItem('host') + localStorage.getItem('api_extension');
         const _token = localStorage.getItem('_token');
 
-        async function getCategories(parent_id) {
+        async function getCategories(parent_id, start) {
             await axios.request({
                 url: "category/getAll",
                 baseURL: baseUrl,
@@ -42,21 +42,27 @@ export default function AddCategory(props) {
                 method: "GET"
             })
                 .then(response => {
-                    console.log(response.data.data);
-                    setCategories(response.data.data);
-                    for (let category in categories) {
-                        if(category.id === parent_id) {
-                            console.log(getCategories(category.id));
-                            category.subCategories = getCategories(category.id);
-                        }
+                    //console.log(parent_id, response.data.data);
+                    if(start)
+                        setCategories(response.data.data);
+                    if(response.data.data.length === 0) {
+                        console.log("empty/");
+                        return "ss";
+                    } else {
+                        response.data.data.map((category, index) => {
+                            console.log(category);
+                            category['subCategories'] = getCategories(category.id);
+                            // let subCategories = async function () {return await getCategories(category.id)};
+                            // console.log(category.id, subCategories());
+                        });
+                        return response.data.data;
                     }
-                    return response;
                 })
                 .catch(error => {
                     console.log(error.response);
                 });
         }
-        getCategories(0);
+        getCategories(0, true);
     }, []);
 
     let handleSelectInputStatues = () => {
@@ -70,7 +76,7 @@ export default function AddCategory(props) {
     let handleSelectedOption = (e) => {
         setSelectedOption({
             id: e.target.getAttribute("value"),
-            name: e.target.getAttribute("optionName")
+            name: e.target.getAttribute("optionname")
         });
         console.log(e.target.getAttribute("value"));
     }
@@ -103,11 +109,11 @@ export default function AddCategory(props) {
                 <div className={"parent-group-input-ui " + selectInputStatues} onClick={handleSelectInputStatues}>
                     <div className="selected-option" value={selectedOption.id}>{selectedOption.name}</div>
                     <div className="options">
-                        <div className={"option " + (selectedOption.id == 0?"active":"")} value="0" optionName="None" onClick={handleSelectedOption} >None</div>
+                        <div className={"option " + (selectedOption.id == 0?"active":"")} value="0" optionname="None" onClick={handleSelectedOption} >None</div>
                         {
                             categories !== []?
                                 categories.map((category, index) => (
-                                    <div className={"option " + (selectedOption.id == category.id?"active":"")} value={category.id} optionName={category.name} key={index} onClick={handleSelectedOption}>{category.name} </div>
+                                    <div className={"option " + (selectedOption.id == category.id?"active":"")} value={category.id} optionname={category.name} key={index} onClick={handleSelectedOption}>{category.name} </div>
                                 )) : ""
                         }
                     </div>
