@@ -1,5 +1,6 @@
 import React, {useEffect, useContext} from 'react';
 import {Field, Formik, ErrorMessage} from "formik";
+import ReactDOM from 'react-dom';
 import useState from 'react-usestateref';
 import {Link, useHistory} from "react-router-dom";
 import * as Yup from "yup";
@@ -9,7 +10,6 @@ import {me} from "../../../../../helperFiles/auth";
 import {AuthContext} from "../../../../contexts/AuthContext";
 
 export default function AddCategory(props) {
-    const [categories, setCategories, categoriesRef] = useState([]);
     const [selectInputStatues, setSelectInputStatues, selectInputStatuesRef] = useState("show");
     const [selectedOption, setSelectedOption] = useState({id: 0,name: "None"});
     let history = useHistory();
@@ -25,45 +25,90 @@ export default function AddCategory(props) {
 
     }, [authContext.auth]);
 
-    useEffect(() => {
-        const baseUrl = localStorage.getItem('host') + localStorage.getItem('api_extension');
-        const _token = localStorage.getItem('_token');
+    function Categories() {
+        const [categories, setCategories, categoriesRef] = useState([]);
+        const [categoriesList, setCategoriesList, categoriesListRef] = useState();
 
-        async function getCategories(parent_id, start) {
-            await axios.request({
-                url: "category/getAll",
-                baseURL: baseUrl,
-                params: {
-                    'api_password': localStorage.getItem('api_password'),
-                    'token': _token,
-                    'parentGroup': parent_id,
-                    'pagination': 0
-                },
-                method: "GET"
-            })
-                .then(response => {
-                    //console.log(parent_id, response.data.data);
-                    if(start)
-                        setCategories(response.data.data);
-                    if(response.data.data.length === 0) {
-                        console.log("empty/");
-                        return "ss";
-                    } else {
-                        response.data.data.map((category, index) => {
-                            console.log(category);
-                            category['subCategories'] = getCategories(category.id);
-                            // let subCategories = async function () {return await getCategories(category.id)};
-                            // console.log(category.id, subCategories());
-                        });
-                        return response.data.data;
-                    }
-                })
-                .catch(error => {
-                    console.log(error.response);
-                });
+        let _listUI;
+
+        function createSorting(list) {
+            let content = [];
+
+            console.log(":", list.length);
+
+            for (let i = 0; i < list.length; i++) {
+                content.push(React.createElement('li', {key: i}, list[i].name));
+                console.log(i, list[i].name);
+                if (Object.values(list[i].subCategories).length !== 0) {
+                    console.log("yes");
+                    content.push(createSorting(Object.values(list[i].subCategories)));
+                }
+            }
+
+            let listUI = React.createElement('ul', {}, content);
+
+            console.log(listUI);
+
+            return listUI;
         }
-        getCategories(0, true);
-    }, []);
+        useEffect(() => {
+            const baseUrl = localStorage.getItem('host') + localStorage.getItem('api_extension');
+            const _token = localStorage.getItem('_token');
+
+            async function getCategories(parent_id) {
+                await axios.request({
+                    url: "category/getAll",
+                    baseURL: baseUrl,
+                    params: {
+                        'api_password': localStorage.getItem('api_password'),
+                        'token': _token,
+                        'parentGroup': 'ALL',
+                        'pagination': 0
+                    },
+                    method: "GET"
+                })
+                    .then(response => {
+                        let _categories = response.data.data;
+                        let newCategories = [];
+
+                        _categories.map((category, index) => {
+                            category.subCategories = {};
+                        });
+
+                        _categories.map((category, index) => {
+                            if(category.parent_group !== 0) {
+                                _categories.map((_category) => {
+                                    if(_category.id === category.parent_group) {
+                                        _category['subCategories'][category.id] = category;
+                                        return;
+                                    }
+                                });
+                            }
+                        });
+
+                        _categories.map((category, index) => {
+                            if(category.parent_group === 0) {
+                                newCategories.push(category);
+                            }
+                        });
+                        setCategories(newCategories);
+                        setCategoriesList(createSorting(categoriesRef.current));
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
+            }
+            getCategories(0);
+        }, []);
+
+        return (
+            <div>
+                { categoriesListRef.current }
+            </div>
+            
+        );
+    }
+
 
     let handleSelectInputStatues = () => {
         if(selectInputStatues === "") {
@@ -100,22 +145,17 @@ export default function AddCategory(props) {
                 <select name="parentGroup" className="parent-group-input" value={values.parentGroup} onChange={handleChange}>
                     <option value="0" label="None" />
                     {
-                        categories !== []?
-                            categories.map((category, index) => (
-                                <option value={category.id} label={category.name} key={index} />
-                            )) : ""
+                        // categories !== []?
+                        //     categories.map((category, index) => (
+                        //         <option value={category.id} label={category.name} key={index} />
+                        //     )) : ""
                     }
                 </select>
                 <div className={"parent-group-input-ui " + selectInputStatues} onClick={handleSelectInputStatues}>
                     <div className="selected-option" value={selectedOption.id}>{selectedOption.name}</div>
                     <div className="options">
                         <div className={"option " + (selectedOption.id == 0?"active":"")} value="0" optionname="None" onClick={handleSelectedOption} >None</div>
-                        {
-                            categories !== []?
-                                categories.map((category, index) => (
-                                    <div className={"option " + (selectedOption.id == category.id?"active":"")} value={category.id} optionname={category.name} key={index} onClick={handleSelectedOption}>{category.name} </div>
-                                )) : ""
-                        }
+                        <Categories />
                     </div>
                 </div>
             </div>

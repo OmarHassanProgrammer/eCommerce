@@ -88680,15 +88680,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var formik__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! formik */ "./node_modules/formik/dist/formik.esm.js");
-/* harmony import */ var react_usestateref__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-usestateref */ "./node_modules/react-usestateref/index.js");
-/* harmony import */ var react_usestateref__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(react_usestateref__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
-/* harmony import */ var yup__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! yup */ "./node_modules/yup/es/index.js");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var react_alert__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! react-alert */ "./node_modules/react-alert/dist/esm/react-alert.js");
-/* harmony import */ var _helperFiles_auth__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../../../helperFiles/auth */ "./resources/js/helperFiles/auth.js");
-/* harmony import */ var _contexts_AuthContext__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../../contexts/AuthContext */ "./resources/js/components/contexts/AuthContext.js");
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var react_usestateref__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-usestateref */ "./node_modules/react-usestateref/index.js");
+/* harmony import */ var react_usestateref__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(react_usestateref__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
+/* harmony import */ var yup__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! yup */ "./node_modules/yup/es/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var react_alert__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! react-alert */ "./node_modules/react-alert/dist/esm/react-alert.js");
+/* harmony import */ var _helperFiles_auth__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../../../helperFiles/auth */ "./resources/js/helperFiles/auth.js");
+/* harmony import */ var _contexts_AuthContext__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../../../contexts/AuthContext */ "./resources/js/components/contexts/AuthContext.js");
 
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
@@ -88716,94 +88718,140 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 
+
 function AddCategory(props) {
-  var _useState = react_usestateref__WEBPACK_IMPORTED_MODULE_3___default()([]),
+  var _useState = react_usestateref__WEBPACK_IMPORTED_MODULE_4___default()("show"),
       _useState2 = _slicedToArray(_useState, 3),
-      categories = _useState2[0],
-      setCategories = _useState2[1],
-      categoriesRef = _useState2[2];
+      selectInputStatues = _useState2[0],
+      setSelectInputStatues = _useState2[1],
+      selectInputStatuesRef = _useState2[2];
 
-  var _useState3 = react_usestateref__WEBPACK_IMPORTED_MODULE_3___default()("show"),
-      _useState4 = _slicedToArray(_useState3, 3),
-      selectInputStatues = _useState4[0],
-      setSelectInputStatues = _useState4[1],
-      selectInputStatuesRef = _useState4[2];
-
-  var _useState5 = react_usestateref__WEBPACK_IMPORTED_MODULE_3___default()({
+  var _useState3 = react_usestateref__WEBPACK_IMPORTED_MODULE_4___default()({
     id: 0,
     name: "None"
   }),
-      _useState6 = _slicedToArray(_useState5, 2),
-      selectedOption = _useState6[0],
-      setSelectedOption = _useState6[1];
+      _useState4 = _slicedToArray(_useState3, 2),
+      selectedOption = _useState4[0],
+      setSelectedOption = _useState4[1];
 
-  var history = Object(react_router_dom__WEBPACK_IMPORTED_MODULE_4__["useHistory"])();
-  var alert = Object(react_alert__WEBPACK_IMPORTED_MODULE_7__["useAlert"])();
-  var authContext = Object(react__WEBPACK_IMPORTED_MODULE_1__["useContext"])(_contexts_AuthContext__WEBPACK_IMPORTED_MODULE_9__["AuthContext"]);
+  var history = Object(react_router_dom__WEBPACK_IMPORTED_MODULE_5__["useHistory"])();
+  var alert = Object(react_alert__WEBPACK_IMPORTED_MODULE_8__["useAlert"])();
+  var authContext = Object(react__WEBPACK_IMPORTED_MODULE_1__["useContext"])(_contexts_AuthContext__WEBPACK_IMPORTED_MODULE_10__["AuthContext"]);
   Object(react__WEBPACK_IMPORTED_MODULE_1__["useEffect"])(function () {
-    Object(_helperFiles_auth__WEBPACK_IMPORTED_MODULE_8__["me"])('ADMIN').then(function (r) {
+    Object(_helperFiles_auth__WEBPACK_IMPORTED_MODULE_9__["me"])('ADMIN').then(function (r) {
       if (!r) {
         history.push('/');
       }
     });
   }, [authContext.auth]);
-  Object(react__WEBPACK_IMPORTED_MODULE_1__["useEffect"])(function () {
-    var baseUrl = localStorage.getItem('host') + localStorage.getItem('api_extension');
 
-    var _token = localStorage.getItem('_token');
+  function Categories() {
+    var _useState5 = react_usestateref__WEBPACK_IMPORTED_MODULE_4___default()([]),
+        _useState6 = _slicedToArray(_useState5, 3),
+        categories = _useState6[0],
+        setCategories = _useState6[1],
+        categoriesRef = _useState6[2];
 
-    function getCategories(_x, _x2) {
-      return _getCategories.apply(this, arguments);
+    var _useState7 = react_usestateref__WEBPACK_IMPORTED_MODULE_4___default()(),
+        _useState8 = _slicedToArray(_useState7, 3),
+        categoriesList = _useState8[0],
+        setCategoriesList = _useState8[1],
+        categoriesListRef = _useState8[2];
+
+    var _listUI;
+
+    function createSorting(list) {
+      var content = [];
+      console.log(":", list.length);
+
+      for (var i = 0; i < list.length; i++) {
+        content.push( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement('li', {
+          key: i
+        }, list[i].name));
+        console.log(i, list[i].name);
+
+        if (Object.values(list[i].subCategories).length !== 0) {
+          console.log("yes");
+          content.push(createSorting(Object.values(list[i].subCategories)));
+        }
+      }
+
+      var listUI = /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement('ul', {}, content);
+      console.log(listUI);
+      return listUI;
     }
 
-    function _getCategories() {
-      _getCategories = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(parent_id, start) {
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                _context.next = 2;
-                return axios__WEBPACK_IMPORTED_MODULE_6___default.a.request({
-                  url: "category/getAll",
-                  baseURL: baseUrl,
-                  params: {
-                    'api_password': localStorage.getItem('api_password'),
-                    'token': _token,
-                    'parentGroup': parent_id,
-                    'pagination': 0
-                  },
-                  method: "GET"
-                }).then(function (response) {
-                  //console.log(parent_id, response.data.data);
-                  if (start) setCategories(response.data.data);
+    Object(react__WEBPACK_IMPORTED_MODULE_1__["useEffect"])(function () {
+      var baseUrl = localStorage.getItem('host') + localStorage.getItem('api_extension');
 
-                  if (response.data.data.length === 0) {
-                    console.log("empty/");
-                    return "ss";
-                  } else {
-                    response.data.data.map(function (category, index) {
-                      console.log(category);
-                      category['subCategories'] = getCategories(category.id); // let subCategories = async function () {return await getCategories(category.id)};
-                      // console.log(category.id, subCategories());
+      var _token = localStorage.getItem('_token');
+
+      function getCategories(_x) {
+        return _getCategories.apply(this, arguments);
+      }
+
+      function _getCategories() {
+        _getCategories = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee(parent_id) {
+          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+            while (1) {
+              switch (_context.prev = _context.next) {
+                case 0:
+                  _context.next = 2;
+                  return axios__WEBPACK_IMPORTED_MODULE_7___default.a.request({
+                    url: "category/getAll",
+                    baseURL: baseUrl,
+                    params: {
+                      'api_password': localStorage.getItem('api_password'),
+                      'token': _token,
+                      'parentGroup': 'ALL',
+                      'pagination': 0
+                    },
+                    method: "GET"
+                  }).then(function (response) {
+                    var _categories = response.data.data;
+                    var newCategories = [];
+
+                    _categories.map(function (category, index) {
+                      category.subCategories = {};
                     });
-                    return response.data.data;
-                  }
-                })["catch"](function (error) {
-                  console.log(error.response);
-                });
 
-              case 2:
-              case "end":
-                return _context.stop();
+                    _categories.map(function (category, index) {
+                      if (category.parent_group !== 0) {
+                        _categories.map(function (_category) {
+                          if (_category.id === category.parent_group) {
+                            _category['subCategories'][category.id] = category;
+                            return;
+                          }
+                        });
+                      }
+                    });
+
+                    _categories.map(function (category, index) {
+                      if (category.parent_group === 0) {
+                        newCategories.push(category);
+                      }
+                    });
+
+                    setCategories(newCategories);
+                    setCategoriesList(createSorting(categoriesRef.current));
+                  })["catch"](function (error) {
+                    console.log(error);
+                  });
+
+                case 2:
+                case "end":
+                  return _context.stop();
+              }
             }
-          }
-        }, _callee);
-      }));
-      return _getCategories.apply(this, arguments);
-    }
+          }, _callee);
+        }));
+        return _getCategories.apply(this, arguments);
+      }
 
-    getCategories(0, true);
-  }, []);
+      getCategories(0);
+    }, []);
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", null, categoriesListRef.current);
+  }
 
   var handleSelectInputStatues = function handleSelectInputStatues() {
     if (selectInputStatues === "") {
@@ -88850,13 +88898,7 @@ function AddCategory(props) {
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("option", {
       value: "0",
       label: "None"
-    }), categories !== [] ? categories.map(function (category, index) {
-      return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("option", {
-        value: category.id,
-        label: category.name,
-        key: index
-      });
-    }) : ""), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
       className: "parent-group-input-ui " + selectInputStatues,
       onClick: handleSelectInputStatues
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
@@ -88869,15 +88911,7 @@ function AddCategory(props) {
       value: "0",
       optionname: "None",
       onClick: handleSelectedOption
-    }, "None"), categories !== [] ? categories.map(function (category, index) {
-      return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
-        className: "option " + (selectedOption.id == category.id ? "active" : ""),
-        value: category.id,
-        optionname: category.name,
-        key: index,
-        onClick: handleSelectedOption
-      }, category.name, " ");
-    }) : ""))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("input", {
+    }, "None"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(Categories, null)))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("input", {
       className: "add-category-btn",
       type: "submit",
       value: "CREATE"
@@ -88885,12 +88919,12 @@ function AddCategory(props) {
   };
 
   var schema = function schema() {
-    return yup__WEBPACK_IMPORTED_MODULE_5__["object"]().shape({
-      name: yup__WEBPACK_IMPORTED_MODULE_5__["string"]().required().min(3)
+    return yup__WEBPACK_IMPORTED_MODULE_6__["object"]().shape({
+      name: yup__WEBPACK_IMPORTED_MODULE_6__["string"]().required().min(3)
     });
   };
 
-  function onSubmit(_x3) {
+  function onSubmit(_x2) {
     return _onSubmit.apply(this, arguments);
   }
 
@@ -88906,7 +88940,7 @@ function AddCategory(props) {
               baseUrl = localStorage.getItem('host') + localStorage.getItem('api_extension');
               _token = localStorage.getItem('_token');
               _context2.next = 5;
-              return axios__WEBPACK_IMPORTED_MODULE_6___default.a.request({
+              return axios__WEBPACK_IMPORTED_MODULE_7___default.a.request({
                 url: "category/add",
                 baseURL: baseUrl,
                 data: {
@@ -88967,12 +89001,12 @@ function AddCategory(props) {
     className: "breadcrumb"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
     className: "breadcrumb-item"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_4__["Link"], {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_5__["Link"], {
     to: "/admin/dashboard/",
     onClick: props.handleRerenderEffect
   }, "Home")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
     className: "breadcrumb-item"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_4__["Link"], {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_5__["Link"], {
     to: "/admin/dashboard/categories",
     onClick: props.handleRerenderEffect
   }, "Categories")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
