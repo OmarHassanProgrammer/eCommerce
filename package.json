@@ -28,6 +28,7 @@
     },
     "dependencies": {
         "formik": "^2.2.1",
+        "query-string": "^7.0.0",
         "react-alert": "^7.0.2",
         "react-alert-template-basic": "^1.0.0",
         "react-router": "^5.2.0",

@@ -2,16 +2,126 @@ import React, {useEffect, useContext} from 'react';
 import {Field, Formik, ErrorMessage} from "formik";
 import ReactDOM from 'react-dom';
 import useState from 'react-usestateref';
-import {Link, useHistory} from "react-router-dom";
+import {Link, useHistory, useParams} from "react-router-dom";
 import * as Yup from "yup";
 import axios from "axios";
 import {useAlert} from "react-alert";
 import {me} from "../../../../../helperFiles/auth";
 import {AuthContext} from "../../../../contexts/AuthContext";
+import { parse } from 'query-string';
+
+function Categories(props) {
+    const [categories, setCategories, categoriesRef] = useState([]);
+    const [categoriesList, setCategoriesList, categoriesListRef] = useState();
+    const [first, setFirst] = useState(true);
+
+    let _listUI;
+
+    function createSorting(list) {
+        let content = [];
+        let optionActivated = false;
+
+        for (let i = 0; i < list.length; i++) {
+
+            if(props.selectedOptionId === list[i].id) {
+                optionActivated = true;
+            }
+
+            if (Object.values(list[i].subCategories).length !== 0) {
+                content.push(React.createElement('li',
+                    {key: i,
+                            className: `parent option` + (props.selectedOptionId === list[i].id?" active":""),
+                            onClick: props.handleSelectedOption,
+                            value: list[i].id,
+                            optionname: list[i].name}
+                    ,list[i].name));
+
+                let subCategories = createSorting(Object.values(list[i].subCategories));
+                if(subCategories[0]) {
+                    optionActivated = true;
+                }
+
+                content.push(subCategories[1]);
+            } else {
+                content.push(React.createElement('li',
+                    {key: i,
+                            className: `option` + (props.selectedOptionId === list[i].id?" active":""),
+                            onClick: props.handleSelectedOption,
+                            value: list[i].id,
+                            optionname: list[i].name},
+                    list[i].name));
+            }
+        }
+
+        let listUI = React.createElement('ul', {className: (optionActivated?"has-active-option":"")}, content);
+
+        return [optionActivated, listUI];
+    }
+    useEffect(() => {
+        const baseUrl = localStorage.getItem('host') + localStorage.getItem('api_extension');
+        const _token = localStorage.getItem('_token');
+
+        async function getCategories(parent_id) {
+            await axios.request({
+                url: "category/getAll",
+                baseURL: baseUrl,
+                params: {
+                    'api_password': localStorage.getItem('api_password'),
+                    'token': _token,
+                    'parentGroup': 'ALL',
+                    'pagination': 0
+                },
+                method: "GET"
+            })
+                .then(response => {
+                    let _categories = response.data.data;
+                    let newCategories = [];
+
+                    _categories.map((category, index) => {
+                        category.subCategories = {};
+                    });
+
+                    _categories.map((category, index) => {
+                        if(category.parent_group !== 0) {
+                            _categories.map((_category) => {
+                                if(_category.id === category.parent_group) {
+                                    _category['subCategories'][category.id] = category;
+                                    return;
+                                }
+                            });
+                        }
+                    });
+
+                    _categories.map((category, index) => {
+                        if(category.parent_group === 0) {
+                            newCategories.push(category);
+                        }
+                    });
+                    setCategories(newCategories);
+                    setCategoriesList(createSorting(categoriesRef.current)[1]);
+                    setFirst(false);
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        }
+        getCategories(0);
+    }, []);
+    useEffect(() => {
+        setCategoriesList(createSorting(categoriesRef.current)[1]);
+    }, [props.selectedOptionId]);
+    return (
+        <div className="categories-options">
+            { categoriesListRef.current }
+        </div>
+
+    );
+}
 
 export default function AddCategory(props) {
     const [selectInputStatues, setSelectInputStatues, selectInputStatuesRef] = useState("show");
     const [selectedOption, setSelectedOption] = useState({id: 0,name: "None"});
+    const [categories, setCategories, categoriesRef] = useState([]);
     let history = useHistory();
     const alert = useAlert();
     const authContext = useContext(AuthContext);
@@ -23,92 +133,35 @@ export default function AddCategory(props) {
             }
         });
 
+        console.log(props.location.search('parent_group_id'));
     }, [authContext.auth]);
 
-    function Categories() {
-        const [categories, setCategories, categoriesRef] = useState([]);
-        const [categoriesList, setCategoriesList, categoriesListRef] = useState();
+    useEffect(() => {
+        const baseUrl = localStorage.getItem('host') + localStorage.getItem('api_extension');
+        const _token = localStorage.getItem('_token');
+        const query = parse(location.search);
+        const parentGroupId = query.parent_group_id;
 
-        let _listUI;
-
-        function createSorting(list) {
-            let content = [];
-
-            console.log(":", list.length);
-
-            for (let i = 0; i < list.length; i++) {
-                content.push(React.createElement('li', {key: i}, list[i].name));
-                console.log(i, list[i].name);
-                if (Object.values(list[i].subCategories).length !== 0) {
-                    console.log("yes");
-                    content.push(createSorting(Object.values(list[i].subCategories)));
-                }
+        async function getCategories() {
+            await axios.request({
+                url: "category/getAll",
+                baseURL: baseUrl,
+                params: {
+                    'api_password': localStorage.getItem('api_password'),
+                    'token': _token,
+                    'parentGroup': 'ALL',
+                    'pagination': 0
+                },
+                method: "GET"
+            })
+                .then(response => {
+                    setCategories(response.data.data);
+                });
             }
+        getCategories();
 
-            let listUI = React.createElement('ul', {}, content);
-
-            console.log(listUI);
-
-            return listUI;
-        }
-        useEffect(() => {
-            const baseUrl = localStorage.getItem('host') + localStorage.getItem('api_extension');
-            const _token = localStorage.getItem('_token');
-
-            async function getCategories(parent_id) {
-                await axios.request({
-                    url: "category/getAll",
-                    baseURL: baseUrl,
-                    params: {
-                        'api_password': localStorage.getItem('api_password'),
-                        'token': _token,
-                        'parentGroup': 'ALL',
-                        'pagination': 0
-                    },
-                    method: "GET"
-                })
-                    .then(response => {
-                        let _categories = response.data.data;
-                        let newCategories = [];
-
-                        _categories.map((category, index) => {
-                            category.subCategories = {};
-                        });
-
-                        _categories.map((category, index) => {
-                            if(category.parent_group !== 0) {
-                                _categories.map((_category) => {
-                                    if(_category.id === category.parent_group) {
-                                        _category['subCategories'][category.id] = category;
-                                        return;
-                                    }
-                                });
-                            }
-                        });
-
-                        _categories.map((category, index) => {
-                            if(category.parent_group === 0) {
-                                newCategories.push(category);
-                            }
-                        });
-                        setCategories(newCategories);
-                        setCategoriesList(createSorting(categoriesRef.current));
-                    })
-                    .catch(error => {
-                        console.log(error);
-                    });
-            }
-            getCategories(0);
-        }, []);
-
-        return (
-            <div>
-                { categoriesListRef.current }
-            </div>
-            
-        );
-    }
-
+        console.log(parentGroupId);
+    }, []);
 
     let handleSelectInputStatues = () => {
         if(selectInputStatues === "") {
@@ -118,22 +171,26 @@ export default function AddCategory(props) {
         }
     }
 
-    let handleSelectedOption = (e) => {
+    let handleSelectedOption = (values, setFieldValue) => e => {
+        const id = e.target.getAttribute("value");
+
         setSelectedOption({
-            id: e.target.getAttribute("value"),
+            id,
             name: e.target.getAttribute("optionname")
         });
-        console.log(e.target.getAttribute("value"));
+        setFieldValue("parentGroup", id);
     }
 
-    let form = (props) => {
+    let form = (formProps) => {
         const {
                 values,
-                handleChange
-            } = props;
+                handleChange,
+                setFieldValue,
+                handleSubmit
+            } = formProps;
 
 
-        return <form className="add-category-form" onSubmit={props.handleSubmit}>
+        return <form className="add-category-form" onSubmit={handleSubmit}>
             <h2 className="title">Create Category</h2>
             <div className="name-input-container">
                 <Field type="text" name="name" className="name-input" placeholder="Category Name" />
@@ -142,20 +199,20 @@ export default function AddCategory(props) {
                 </span>
             </div>
             <div className="select">
-                <select name="parentGroup" className="parent-group-input" value={values.parentGroup} onChange={handleChange}>
+                <select name="parentGroup" className="parent-group-input" value={values.parentGroup} onChange={handleChange} >
                     <option value="0" label="None" />
                     {
-                        // categories !== []?
-                        //     categories.map((category, index) => (
-                        //         <option value={category.id} label={category.name} key={index} />
-                        //     )) : ""
+                        categories !== []?
+                            categories.map((category, index) => (
+                                <option value={category.id} label={category.name} key={index} />
+                            )) : ""
                     }
                 </select>
                 <div className={"parent-group-input-ui " + selectInputStatues} onClick={handleSelectInputStatues}>
                     <div className="selected-option" value={selectedOption.id}>{selectedOption.name}</div>
                     <div className="options">
-                        <div className={"option " + (selectedOption.id == 0?"active":"")} value="0" optionname="None" onClick={handleSelectedOption} >None</div>
-                        <Categories />
+                        <div className={"option " + (selectedOption.id === 0?"active":"")} value="0" optionname="None" onClick={handleSelectedOption(values, setFieldValue)} >None</div>
+                        <Categories selectedOptionId={selectedOption.id} handleSelectedOption={handleSelectedOption(values, setFieldValue)}/>
                     </div>
                 </div>
             </div>
@@ -174,6 +231,8 @@ export default function AddCategory(props) {
         try {
             const baseUrl = localStorage.getItem('host') + localStorage.getItem('api_extension');
             const _token = localStorage.getItem('_token');
+
+            console.log(values);
 
             let response = await axios.request({
                 url: "category/add",
@@ -228,7 +287,7 @@ export default function AddCategory(props) {
             </div>
             <div className="add-category">
                 <Formik
-                    initialValues={{name: "", parentGroup: "0", logo: ""}}
+                    initialValues={{name: "", parentGroup: '0', logo: ""}}
                     onSubmit={onSubmit}
                     render={form}
                     validationSchema={schema()} />

@@ -143,7 +143,7 @@
                     justify-self: end;
                     clip-path: polygon(100% 0%, 0 0%, 50% 100%);
                     position: relative;
-                    top: 8px;
+                    top: 10px;
                     right: 10px
                 }
                 select {
@@ -174,10 +174,47 @@
                     .options {
                         height: 0;
                         transition: all .5s ease-in-out;
+                        font-size: 1.1rem;
+                        ul {
+                            list-style: none;
+                            &.has-active-option {
+                                display: block !important;
+                            }
+                        }
+                        .categories-options > ul  {
+                            padding: 0;
+                        }
                         .option {
-                            padding: 5px;
+                            padding: 5px 5px 5px 25px;
                             &:hover, &.active {
                                 background-color: #e5e5e5
+                            }
+                        }
+                        li {
+                            position: relative;
+                            &.parent {
+                                + ul {
+                                    display: none;
+                                }
+                                &:before {
+                                    content: "";
+                                    width: 10px;
+                                    height: 7px;
+                                    left: 7px;
+                                    top: 16px;
+                                    background-color: #777;
+                                    position: absolute;
+                                    clip-path: polygon(100% 0%, 0 0%, 50% 100%);
+
+                                }
+                                &.active {
+                                    + ul {
+                                        display: block;
+                                    }
+                                    &:before {
+                                        transform: rotate(180deg);
+                                    }
+                                 }
                             }
                         }
                     }

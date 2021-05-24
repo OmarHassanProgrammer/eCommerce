@@ -133,7 +133,7 @@ export default function CategoryPage(props) {
             </div>
             <div className="categories">
                 <div className="category add-category">
-                    <Link to="/admin/dashboard/categories/addcategory/">
+                    <Link to={"/admin/dashboard/categories/addcategory?parent_group_id=" + categoryID + "&parent_group_name=" + category.name }>
                             <span className="add-btn">+</span>
                     </Link>
                 </div>
