@@ -11937,9 +11937,9 @@ a.text-dark:focus {
   display: none;
 }
 
-.dashboard-page .content .my-container .body .categories-page .add-category .add-category-form .select .parent-group-input-ui .options li.parent:before,
-.dashboard-page .content .my-container .body .category-page .add-category .add-category-form .select .parent-group-input-ui .options li.parent:before {
-  content: "";
+.dashboard-page .content .my-container .body .categories-page .add-category .add-category-form .select .parent-group-input-ui .options li.parent .change-status,
+.dashboard-page .content .my-container .body .category-page .add-category .add-category-form .select .parent-group-input-ui .options li.parent .change-status {
+  z-index: 5;
   width: 10px;
   height: 7px;
   left: 7px;
@@ -11950,13 +11950,13 @@ a.text-dark:focus {
           clip-path: polygon(100% 0%, 0 0%, 50% 100%);
 }
 
-.dashboard-page .content .my-container .body .categories-page .add-category .add-category-form .select .parent-group-input-ui .options li.parent.active + ul,
-.dashboard-page .content .my-container .body .category-page .add-category .add-category-form .select .parent-group-input-ui .options li.parent.active + ul {
+.dashboard-page .content .my-container .body .categories-page .add-category .add-category-form .select .parent-group-input-ui .options li.parent.open + ul,
+.dashboard-page .content .my-container .body .category-page .add-category .add-category-form .select .parent-group-input-ui .options li.parent.open + ul {
   display: block;
 }
 
-.dashboard-page .content .my-container .body .categories-page .add-category .add-category-form .select .parent-group-input-ui .options li.parent.active:before,
-.dashboard-page .content .my-container .body .category-page .add-category .add-category-form .select .parent-group-input-ui .options li.parent.active:before {
+.dashboard-page .content .my-container .body .categories-page .add-category .add-category-form .select .parent-group-input-ui .options li.parent.open .change-status,
+.dashboard-page .content .my-container .body .category-page .add-category .add-category-form .select .parent-group-input-ui .options li.parent.open .change-status {
   transform: rotate(180deg);
 }
 

@@ -196,8 +196,8 @@
                                 + ul {
                                     display: none;
                                 }
-                                &:before {
-                                    content: "";
+                                .change-status {
+                                    z-index: 5;
                                     width: 10px;
                                     height: 7px;
                                     left: 7px;
@@ -207,14 +207,14 @@
                                     clip-path: polygon(100% 0%, 0 0%, 50% 100%);
 
                                 }
-                                &.active {
+                                &.open {
                                     + ul {
                                         display: block;
                                     }
-                                    &:before {
+                                    .change-status {
                                         transform: rotate(180deg);
                                     }
-                                 }
+                                }
                             }
                         }
                     }

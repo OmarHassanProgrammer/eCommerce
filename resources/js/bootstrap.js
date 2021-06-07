@@ -68,6 +68,24 @@ window.__ = (wordKey, file) => {
         }
     }
 }
+window.getQueryParam = (paramName) => {
+    let url = decodeURI(window.location.href);
+    let paramStart = url.search(paramName + "=") + paramName.length + 1;
+    let paramEnd = 0;
+    let paramVal = "";
+
+    if(paramStart !== -1) {
+        paramEnd = url.slice(paramStart).search('&');
+        if(paramEnd === -1) {
+            paramVal = url.slice(paramStart);
+        } else {
+            paramVal = url.slice(paramStart, paramEnd + paramStart);
+        }
+    } else {
+        return "null";
+    }
+    return paramVal;
+}
 
 
 

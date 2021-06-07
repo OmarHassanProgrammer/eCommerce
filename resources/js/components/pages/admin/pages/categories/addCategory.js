@@ -1,14 +1,12 @@
 import React, {useEffect, useContext} from 'react';
 import {Field, Formik, ErrorMessage} from "formik";
-import ReactDOM from 'react-dom';
 import useState from 'react-usestateref';
-import {Link, useHistory, useParams} from "react-router-dom";
+import {Link, useHistory} from "react-router-dom";
 import * as Yup from "yup";
 import axios from "axios";
 import {useAlert} from "react-alert";
 import {me} from "../../../../../helperFiles/auth";
 import {AuthContext} from "../../../../contexts/AuthContext";
-import { parse } from 'query-string';
 
 function Categories(props) {
     const [categories, setCategories, categoriesRef] = useState([]);
@@ -23,20 +21,22 @@ function Categories(props) {
 
         for (let i = 0; i < list.length; i++) {
 
-            if(props.selectedOptionId === list[i].id) {
+            if(props.selectedOptionId == list[i].id) {
                 optionActivated = true;
             }
 
             if (Object.values(list[i].subCategories).length !== 0) {
+                let subCategories = createSorting(Object.values(list[i].subCategories));
                 content.push(React.createElement('li',
                     {key: i,
-                            className: `parent option` + (props.selectedOptionId === list[i].id?" active":""),
+                            className: `parent option` + (props.selectedOptionId == list[i].id?" active open":"") + (subCategories[0]?' open':''),
                             onClick: props.handleSelectedOption,
                             value: list[i].id,
                             optionname: list[i].name}
-                    ,list[i].name));
+                    ,[
+                        React.createElement('span', {className: 'change-status', onClick: props.handleOptionStatus}, ''),
+                        list[i].name]));
 
-                let subCategories = createSorting(Object.values(list[i].subCategories));
                 if(subCategories[0]) {
                     optionActivated = true;
                 }
@@ -45,7 +45,7 @@ function Categories(props) {
             } else {
                 content.push(React.createElement('li',
                     {key: i,
-                            className: `option` + (props.selectedOptionId === list[i].id?" active":""),
+                            className: `option` + (props.selectedOptionId == list[i].id?" active open":""),
                             onClick: props.handleSelectedOption,
                             value: list[i].id,
                             optionname: list[i].name},
@@ -109,6 +109,7 @@ function Categories(props) {
     }, []);
     useEffect(() => {
         setCategoriesList(createSorting(categoriesRef.current)[1]);
+        console.log('ss');
     }, [props.selectedOptionId]);
     return (
         <div className="categories-options">
@@ -120,10 +121,14 @@ function Categories(props) {
 
 export default function AddCategory(props) {
     const [selectInputStatues, setSelectInputStatues, selectInputStatuesRef] = useState("show");
-    const [selectedOption, setSelectedOption] = useState({id: 0,name: "None"});
+    const [selectedOption, setSelectedOption] = useState({
+        id: getQueryParam('group-parent-id'),
+        name: getQueryParam('group-parent-name')
+    });
     const [categories, setCategories, categoriesRef] = useState([]);
     let history = useHistory();
     const alert = useAlert();
+    const [parentsFamilyElement, setParentsFamilyElement, parentsFamilyElementRef] = useState([]);
     const authContext = useContext(AuthContext);
 
     useEffect(() => {
@@ -133,14 +138,58 @@ export default function AddCategory(props) {
             }
         });
 
-        console.log(props.location.search('parent_group_id'));
     }, [authContext.auth]);
+
+    useEffect(() => {
+        if(getQueryParam('group-parent-id') !== undefined) {
+            categoryFamilyTreeFunc(getQueryParam('group-parent-id'));
+        }
+    }, []);
+
+    async function categoryFamilyTreeFunc(parent_id) {
+        let parentID = parent_id;
+        const baseUrl = localStorage.getItem('host') + localStorage.getItem('api_extension');
+        const _token = localStorage.getItem('_token');
+        setParentsFamilyElement([]);
+
+        async function _categoryFamilyTreeFunc() {
+            console.log(parentID);
+            if(parentID !== 0) {
+                await axios.request({
+                    url: "category/get/" + parentID,
+                    baseURL: baseUrl,
+                    params: {
+                        'api_password': localStorage.getItem('api_password'),
+                        'token': _token,
+                    },
+                    method: "GET"
+                })
+                    .then(response => {
+                        console.log(response);
+                        setParentsFamilyElement([
+                            response.data.category,
+                            ...parentsFamilyElementRef.current
+                        ]);
+                        parentID = response.data.category.parent_group;
+                        _categoryFamilyTreeFunc();
+                    })
+                    .catch(error => {
+                        console.log(error.response);
+                    });
+            } else {
+                console.log("tree", parentsFamilyElementRef.current);
+            }
+        }
+        _categoryFamilyTreeFunc();
+    }
 
     useEffect(() => {
         const baseUrl = localStorage.getItem('host') + localStorage.getItem('api_extension');
         const _token = localStorage.getItem('_token');
-        const query = parse(location.search);
-        const parentGroupId = query.parent_group_id;
+        setSelectedOption({
+            id: getQueryParam('group-parent-id'),
+            name: getQueryParam('group-parent-name')
+        });
 
         async function getCategories() {
             await axios.request({
@@ -157,18 +206,23 @@ export default function AddCategory(props) {
                 .then(response => {
                     setCategories(response.data.data);
                 });
-            }
+        }
+
         getCategories();
 
-        console.log(parentGroupId);
     }, []);
 
-    let handleSelectInputStatues = () => {
+    let handleSelectInputStatus = () => {
         if(selectInputStatues === "") {
             setSelectInputStatues("show");
         } else {
             setSelectInputStatues("");
         }
+    }
+
+    let handleOptionStatus = (e) => {
+        e.preventDefault();
+        e.target.setAttribute('class', e.target.getAttribute('class').replace('open', ''));
     }
 
     let handleSelectedOption = (values, setFieldValue) => e => {
@@ -198,7 +252,7 @@ export default function AddCategory(props) {
                     <ErrorMessage name="name"/>
                 </span>
             </div>
-            <div className="select">
+            <div className="select" onClick={handleSelectInputStatus}>
                 <select name="parentGroup" className="parent-group-input" value={values.parentGroup} onChange={handleChange} >
                     <option value="0" label="None" />
                     {
@@ -208,11 +262,11 @@ export default function AddCategory(props) {
                             )) : ""
                     }
                 </select>
-                <div className={"parent-group-input-ui " + selectInputStatues} onClick={handleSelectInputStatues}>
+                <div className={"parent-group-input-ui " + selectInputStatues} >
                     <div className="selected-option" value={selectedOption.id}>{selectedOption.name}</div>
                     <div className="options">
                         <div className={"option " + (selectedOption.id === 0?"active":"")} value="0" optionname="None" onClick={handleSelectedOption(values, setFieldValue)} >None</div>
-                        <Categories selectedOptionId={selectedOption.id} handleSelectedOption={handleSelectedOption(values, setFieldValue)}/>
+                        <Categories selectedOptionId={selectedOption.id} handleSelectedOption={handleSelectedOption(values, setFieldValue)} handleOptionStatus={handleOptionStatus}/>
                     </div>
                 </div>
             </div>
@@ -282,12 +336,20 @@ export default function AddCategory(props) {
                     <li className="breadcrumb-item">
                         <Link to='/admin/dashboard/categories' onClick={props.handleRerenderEffect} >Categories</Link>
                     </li>
+                    {
+                        parentsFamilyElementRef.current.map(element => {
+                            return  (
+                                <li className="breadcrumb-item" key={element.id}>
+                                    <Link to={'/admin/dashboard/category/' + element.id} onClick={props.handleRerenderEffect} >{ element.name }</Link>
+                                </li>)
+                        })
+                    }
                     <li className="breadcrumb-item active" >Add Category</li>
                 </ol>
             </div>
             <div className="add-category">
                 <Formik
-                    initialValues={{name: "", parentGroup: '0', logo: ""}}
+                    initialValues={{name: "", parentGroup: parseInt(getQueryParam('group-parent-id')), logo: ""}}
                     onSubmit={onSubmit}
                     render={form}
                     validationSchema={schema()} />

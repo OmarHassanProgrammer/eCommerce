@@ -6483,112 +6483,6 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./node_modules/decode-uri-component/index.js":
-/*!****************************************************!*\
-  !*** ./node_modules/decode-uri-component/index.js ***!
-  \****************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var token = '%[a-f0-9]{2}';
-var singleMatcher = new RegExp(token, 'gi');
-var multiMatcher = new RegExp('(' + token + ')+', 'gi');
-
-function decodeComponents(components, split) {
-	try {
-		// Try to decode the entire string first
-		return decodeURIComponent(components.join(''));
-	} catch (err) {
-		// Do nothing
-	}
-
-	if (components.length === 1) {
-		return components;
-	}
-
-	split = split || 1;
-
-	// Split the array in 2 parts
-	var left = components.slice(0, split);
-	var right = components.slice(split);
-
-	return Array.prototype.concat.call([], decodeComponents(left), decodeComponents(right));
-}
-
-function decode(input) {
-	try {
-		return decodeURIComponent(input);
-	} catch (err) {
-		var tokens = input.match(singleMatcher);
-
-		for (var i = 1; i < tokens.length; i++) {
-			input = decodeComponents(tokens, i).join('');
-
-			tokens = input.match(singleMatcher);
-		}
-
-		return input;
-	}
-}
-
-function customDecodeURIComponent(input) {
-	// Keep track of all the replacements and prefill the map with the `BOM`
-	var replaceMap = {
-		'%FE%FF': '\uFFFD\uFFFD',
-		'%FF%FE': '\uFFFD\uFFFD'
-	};
-
-	var match = multiMatcher.exec(input);
-	while (match) {
-		try {
-			// Decode as big chunks as possible
-			replaceMap[match[0]] = decodeURIComponent(match[0]);
-		} catch (err) {
-			var result = decode(match[0]);
-
-			if (result !== match[0]) {
-				replaceMap[match[0]] = result;
-			}
-		}
-
-		match = multiMatcher.exec(input);
-	}
-
-	// Add `%C2` at the end of the map to make sure it does not replace the combinator before everything else
-	replaceMap['%C2'] = '\uFFFD';
-
-	var entries = Object.keys(replaceMap);
-
-	for (var i = 0; i < entries.length; i++) {
-		// Replace all decoded components
-		var key = entries[i];
-		input = input.replace(new RegExp(key, 'g'), replaceMap[key]);
-	}
-
-	return input;
-}
-
-module.exports = function (encodedURI) {
-	if (typeof encodedURI !== 'string') {
-		throw new TypeError('Expected `encodedURI` to be of type `string`, got `' + typeof encodedURI + '`');
-	}
-
-	try {
-		encodedURI = encodedURI.replace(/\+/g, ' ');
-
-		// Try the built in decoder first
-		return decodeURIComponent(encodedURI);
-	} catch (err) {
-		// Fallback to a more advanced decoder
-		return customDecodeURIComponent(encodedURI);
-	}
-};
-
-
-/***/ }),
-
 /***/ "./node_modules/deepmerge/dist/es.js":
 /*!*******************************************!*\
   !*** ./node_modules/deepmerge/dist/es.js ***!
@@ -6750,35 +6644,6 @@ function removeClass(element, className) {
     element.setAttribute('class', replaceClassName(element.className && element.className.baseVal || '', className));
   }
 }
-
-/***/ }),
-
-/***/ "./node_modules/filter-obj/index.js":
-/*!******************************************!*\
-  !*** ./node_modules/filter-obj/index.js ***!
-  \******************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-module.exports = function (obj, predicate) {
-	var ret = {};
-	var keys = Object.keys(obj);
-	var isArr = Array.isArray(predicate);
-
-	for (var i = 0; i < keys.length; i++) {
-		var key = keys[i];
-		var val = obj[key];
-
-		if (isArr ? predicate.indexOf(key) !== -1 : predicate(key, val, obj)) {
-			ret[key] = val;
-		}
-	}
-
-	return ret;
-};
-
 
 /***/ }),
 
@@ -50704,461 +50569,6 @@ function shouldBeQuoted(part) {
 
 /***/ }),
 
-/***/ "./node_modules/query-string/index.js":
-/*!********************************************!*\
-  !*** ./node_modules/query-string/index.js ***!
-  \********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-const strictUriEncode = __webpack_require__(/*! strict-uri-encode */ "./node_modules/strict-uri-encode/index.js");
-const decodeComponent = __webpack_require__(/*! decode-uri-component */ "./node_modules/decode-uri-component/index.js");
-const splitOnFirst = __webpack_require__(/*! split-on-first */ "./node_modules/split-on-first/index.js");
-const filterObject = __webpack_require__(/*! filter-obj */ "./node_modules/filter-obj/index.js");
-
-const isNullOrUndefined = value => value === null || value === undefined;
-
-function encoderForArrayFormat(options) {
-	switch (options.arrayFormat) {
-		case 'index':
-			return key => (result, value) => {
-				const index = result.length;
-
-				if (
-					value === undefined ||
-					(options.skipNull && value === null) ||
-					(options.skipEmptyString && value === '')
-				) {
-					return result;
-				}
-
-				if (value === null) {
-					return [...result, [encode(key, options), '[', index, ']'].join('')];
-				}
-
-				return [
-					...result,
-					[encode(key, options), '[', encode(index, options), ']=', encode(value, options)].join('')
-				];
-			};
-
-		case 'bracket':
-			return key => (result, value) => {
-				if (
-					value === undefined ||
-					(options.skipNull && value === null) ||
-					(options.skipEmptyString && value === '')
-				) {
-					return result;
-				}
-
-				if (value === null) {
-					return [...result, [encode(key, options), '[]'].join('')];
-				}
-
-				return [...result, [encode(key, options), '[]=', encode(value, options)].join('')];
-			};
-
-		case 'comma':
-		case 'separator':
-		case 'bracket-separator': {
-			const keyValueSep = options.arrayFormat === 'bracket-separator' ?
-				'[]=' :
-				'=';
-
-			return key => (result, value) => {
-				if (
-					value === undefined ||
-					(options.skipNull && value === null) ||
-					(options.skipEmptyString && value === '')
-				) {
-					return result;
-				}
-
-				// Translate null to an empty string so that it doesn't serialize as 'null'
-				value = value === null ? '' : value;
-
-				if (result.length === 0) {
-					return [[encode(key, options), keyValueSep, encode(value, options)].join('')];
-				}
-
-				return [[result, encode(value, options)].join(options.arrayFormatSeparator)];
-			};
-		}
-
-		default:
-			return key => (result, value) => {
-				if (
-					value === undefined ||
-					(options.skipNull && value === null) ||
-					(options.skipEmptyString && value === '')
-				) {
-					return result;
-				}
-
-				if (value === null) {
-					return [...result, encode(key, options)];
-				}
-
-				return [...result, [encode(key, options), '=', encode(value, options)].join('')];
-			};
-	}
-}
-
-function parserForArrayFormat(options) {
-	let result;
-
-	switch (options.arrayFormat) {
-		case 'index':
-			return (key, value, accumulator) => {
-				result = /\[(\d*)\]$/.exec(key);
-
-				key = key.replace(/\[\d*\]$/, '');
-
-				if (!result) {
-					accumulator[key] = value;
-					return;
-				}
-
-				if (accumulator[key] === undefined) {
-					accumulator[key] = {};
-				}
-
-				accumulator[key][result[1]] = value;
-			};
-
-		case 'bracket':
-			return (key, value, accumulator) => {
-				result = /(\[\])$/.exec(key);
-				key = key.replace(/\[\]$/, '');
-
-				if (!result) {
-					accumulator[key] = value;
-					return;
-				}
-
-				if (accumulator[key] === undefined) {
-					accumulator[key] = [value];
-					return;
-				}
-
-				accumulator[key] = [].concat(accumulator[key], value);
-			};
-
-		case 'comma':
-		case 'separator':
-			return (key, value, accumulator) => {
-				const isArray = typeof value === 'string' && value.includes(options.arrayFormatSeparator);
-				const isEncodedArray = (typeof value === 'string' && !isArray && decode(value, options).includes(options.arrayFormatSeparator));
-				value = isEncodedArray ? decode(value, options) : value;
-				const newValue = isArray || isEncodedArray ? value.split(options.arrayFormatSeparator).map(item => decode(item, options)) : value === null ? value : decode(value, options);
-				accumulator[key] = newValue;
-			};
-
-		case 'bracket-separator':
-			return (key, value, accumulator) => {
-				const isArray = /(\[\])$/.test(key);
-				key = key.replace(/\[\]$/, '');
-
-				if (!isArray) {
-					accumulator[key] = value ? decode(value, options) : value;
-					return;
-				}
-
-				const arrayValue = value === null ?
-					[] :
-					value.split(options.arrayFormatSeparator).map(item => decode(item, options));
-
-				if (accumulator[key] === undefined) {
-					accumulator[key] = arrayValue;
-					return;
-				}
-
-				accumulator[key] = [].concat(accumulator[key], arrayValue);
-			};
-
-		default:
-			return (key, value, accumulator) => {
-				if (accumulator[key] === undefined) {
-					accumulator[key] = value;
-					return;
-				}
-
-				accumulator[key] = [].concat(accumulator[key], value);
-			};
-	}
-}
-
-function validateArrayFormatSeparator(value) {
-	if (typeof value !== 'string' || value.length !== 1) {
-		throw new TypeError('arrayFormatSeparator must be single character string');
-	}
-}
-
-function encode(value, options) {
-	if (options.encode) {
-		return options.strict ? strictUriEncode(value) : encodeURIComponent(value);
-	}
-
-	return value;
-}
-
-function decode(value, options) {
-	if (options.decode) {
-		return decodeComponent(value);
-	}
-
-	return value;
-}
-
-function keysSorter(input) {
-	if (Array.isArray(input)) {
-		return input.sort();
-	}
-
-	if (typeof input === 'object') {
-		return keysSorter(Object.keys(input))
-			.sort((a, b) => Number(a) - Number(b))
-			.map(key => input[key]);
-	}
-
-	return input;
-}
-
-function removeHash(input) {
-	const hashStart = input.indexOf('#');
-	if (hashStart !== -1) {
-		input = input.slice(0, hashStart);
-	}
-
-	return input;
-}
-
-function getHash(url) {
-	let hash = '';
-	const hashStart = url.indexOf('#');
-	if (hashStart !== -1) {
-		hash = url.slice(hashStart);
-	}
-
-	return hash;
-}
-
-function extract(input) {
-	input = removeHash(input);
-	const queryStart = input.indexOf('?');
-	if (queryStart === -1) {
-		return '';
-	}
-
-	return input.slice(queryStart + 1);
-}
-
-function parseValue(value, options) {
-	if (options.parseNumbers && !Number.isNaN(Number(value)) && (typeof value === 'string' && value.trim() !== '')) {
-		value = Number(value);
-	} else if (options.parseBooleans && value !== null && (value.toLowerCase() === 'true' || value.toLowerCase() === 'false')) {
-		value = value.toLowerCase() === 'true';
-	}
-
-	return value;
-}
-
-function parse(query, options) {
-	options = Object.assign({
-		decode: true,
-		sort: true,
-		arrayFormat: 'none',
-		arrayFormatSeparator: ',',
-		parseNumbers: false,
-		parseBooleans: false
-	}, options);
-
-	validateArrayFormatSeparator(options.arrayFormatSeparator);
-
-	const formatter = parserForArrayFormat(options);
-
-	// Create an object with no prototype
-	const ret = Object.create(null);
-
-	if (typeof query !== 'string') {
-		return ret;
-	}
-
-	query = query.trim().replace(/^[?#&]/, '');
-
-	if (!query) {
-		return ret;
-	}
-
-	for (const param of query.split('&')) {
-		if (param === '') {
-			continue;
-		}
-
-		let [key, value] = splitOnFirst(options.decode ? param.replace(/\+/g, ' ') : param, '=');
-
-		// Missing `=` should be `null`:
-		// http://w3.org/TR/2012/WD-url-20120524/#collect-url-parameters
-		value = value === undefined ? null : ['comma', 'separator', 'bracket-separator'].includes(options.arrayFormat) ? value : decode(value, options);
-		formatter(decode(key, options), value, ret);
-	}
-
-	for (const key of Object.keys(ret)) {
-		const value = ret[key];
-		if (typeof value === 'object' && value !== null) {
-			for (const k of Object.keys(value)) {
-				value[k] = parseValue(value[k], options);
-			}
-		} else {
-			ret[key] = parseValue(value, options);
-		}
-	}
-
-	if (options.sort === false) {
-		return ret;
-	}
-
-	return (options.sort === true ? Object.keys(ret).sort() : Object.keys(ret).sort(options.sort)).reduce((result, key) => {
-		const value = ret[key];
-		if (Boolean(value) && typeof value === 'object' && !Array.isArray(value)) {
-			// Sort object keys, not values
-			result[key] = keysSorter(value);
-		} else {
-			result[key] = value;
-		}
-
-		return result;
-	}, Object.create(null));
-}
-
-exports.extract = extract;
-exports.parse = parse;
-
-exports.stringify = (object, options) => {
-	if (!object) {
-		return '';
-	}
-
-	options = Object.assign({
-		encode: true,
-		strict: true,
-		arrayFormat: 'none',
-		arrayFormatSeparator: ','
-	}, options);
-
-	validateArrayFormatSeparator(options.arrayFormatSeparator);
-
-	const shouldFilter = key => (
-		(options.skipNull && isNullOrUndefined(object[key])) ||
-		(options.skipEmptyString && object[key] === '')
-	);
-
-	const formatter = encoderForArrayFormat(options);
-
-	const objectCopy = {};
-
-	for (const key of Object.keys(object)) {
-		if (!shouldFilter(key)) {
-			objectCopy[key] = object[key];
-		}
-	}
-
-	const keys = Object.keys(objectCopy);
-
-	if (options.sort !== false) {
-		keys.sort(options.sort);
-	}
-
-	return keys.map(key => {
-		const value = object[key];
-
-		if (value === undefined) {
-			return '';
-		}
-
-		if (value === null) {
-			return encode(key, options);
-		}
-
-		if (Array.isArray(value)) {
-			if (value.length === 0 && options.arrayFormat === 'bracket-separator') {
-				return encode(key, options) + '[]';
-			}
-
-			return value
-				.reduce(formatter(key), [])
-				.join('&');
-		}
-
-		return encode(key, options) + '=' + encode(value, options);
-	}).filter(x => x.length > 0).join('&');
-};
-
-exports.parseUrl = (url, options) => {
-	options = Object.assign({
-		decode: true
-	}, options);
-
-	const [url_, hash] = splitOnFirst(url, '#');
-
-	return Object.assign(
-		{
-			url: url_.split('?')[0] || '',
-			query: parse(extract(url), options)
-		},
-		options && options.parseFragmentIdentifier && hash ? {fragmentIdentifier: decode(hash, options)} : {}
-	);
-};
-
-exports.stringifyUrl = (object, options) => {
-	options = Object.assign({
-		encode: true,
-		strict: true
-	}, options);
-
-	const url = removeHash(object.url).split('?')[0] || '';
-	const queryFromUrl = exports.extract(object.url);
-	const parsedQueryFromUrl = exports.parse(queryFromUrl, {sort: false});
-
-	const query = Object.assign(parsedQueryFromUrl, object.query);
-	let queryString = exports.stringify(query, options);
-	if (queryString) {
-		queryString = `?${queryString}`;
-	}
-
-	let hash = getHash(object.url);
-	if (object.fragmentIdentifier) {
-		hash = `#${encode(object.fragmentIdentifier, options)}`;
-	}
-
-	return `${url}${queryString}${hash}`;
-};
-
-exports.pick = (input, filter, options) => {
-	options = Object.assign({
-		parseFragmentIdentifier: true
-	}, options);
-
-	const {url, query, fragmentIdentifier} = exports.parseUrl(input, options);
-	return exports.stringifyUrl({
-		url,
-		query: filterObject(query, filter),
-		fragmentIdentifier
-	}, options);
-};
-
-exports.exclude = (input, filter, options) => {
-	const exclusionFilter = Array.isArray(filter) ? key => !filter.includes(key) : (key, value) => !filter(key, value);
-
-	return exports.pick(input, exclusionFilter, options);
-};
-
-
-/***/ }),
-
 /***/ "./node_modules/react-alert-template-basic/dist/esm/react-alert-template-basic.js":
 /*!****************************************************************************************!*\
   !*** ./node_modules/react-alert-template-basic/dist/esm/react-alert-template-basic.js ***!
@@ -84926,54 +84336,6 @@ if (false) {} else {
 
 /***/ }),
 
-/***/ "./node_modules/split-on-first/index.js":
-/*!**********************************************!*\
-  !*** ./node_modules/split-on-first/index.js ***!
-  \**********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = (string, separator) => {
-	if (!(typeof string === 'string' && typeof separator === 'string')) {
-		throw new TypeError('Expected the arguments to be of type `string`');
-	}
-
-	if (separator === '') {
-		return [string];
-	}
-
-	const separatorIndex = string.indexOf(separator);
-
-	if (separatorIndex === -1) {
-		return [string];
-	}
-
-	return [
-		string.slice(0, separatorIndex),
-		string.slice(separatorIndex + separator.length)
-	];
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/strict-uri-encode/index.js":
-/*!*************************************************!*\
-  !*** ./node_modules/strict-uri-encode/index.js ***!
-  \*************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-module.exports = str => encodeURIComponent(str).replace(/[!'()*]/g, x => `%${x.charCodeAt(0).toString(16).toUpperCase()}`);
-
-
-/***/ }),
-
 /***/ "./node_modules/synchronous-promise/index.js":
 /*!***************************************************!*\
   !*** ./node_modules/synchronous-promise/index.js ***!
@@ -88747,6 +88109,27 @@ window.__ = function (wordKey, file) {
   }
 };
 
+window.getQueryParam = function (paramName) {
+  var url = decodeURI(window.location.href);
+  var paramStart = url.search(paramName + "=") + paramName.length + 1;
+  var paramEnd = 0;
+  var paramVal = "";
+
+  if (paramStart !== -1) {
+    paramEnd = url.slice(paramStart).search('&');
+
+    if (paramEnd === -1) {
+      paramVal = url.slice(paramStart);
+    } else {
+      paramVal = url.slice(paramStart, paramEnd + paramStart);
+    }
+  } else {
+    return "null";
+  }
+
+  return paramVal;
+};
+
 /***/ }),
 
 /***/ "./resources/js/components/Index.js":
@@ -89318,20 +88701,24 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var formik__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! formik */ "./node_modules/formik/dist/formik.esm.js");
-/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
-/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var react_usestateref__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-usestateref */ "./node_modules/react-usestateref/index.js");
-/* harmony import */ var react_usestateref__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(react_usestateref__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
-/* harmony import */ var yup__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! yup */ "./node_modules/yup/es/index.js");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var react_alert__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! react-alert */ "./node_modules/react-alert/dist/esm/react-alert.js");
-/* harmony import */ var _helperFiles_auth__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../../../helperFiles/auth */ "./resources/js/helperFiles/auth.js");
-/* harmony import */ var _contexts_AuthContext__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../../../contexts/AuthContext */ "./resources/js/components/contexts/AuthContext.js");
-/* harmony import */ var query_string__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! query-string */ "./node_modules/query-string/index.js");
-/* harmony import */ var query_string__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(query_string__WEBPACK_IMPORTED_MODULE_11__);
+/* harmony import */ var react_usestateref__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-usestateref */ "./node_modules/react-usestateref/index.js");
+/* harmony import */ var react_usestateref__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(react_usestateref__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var react_router_dom__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! react-router-dom */ "./node_modules/react-router-dom/esm/react-router-dom.js");
+/* harmony import */ var yup__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! yup */ "./node_modules/yup/es/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var react_alert__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! react-alert */ "./node_modules/react-alert/dist/esm/react-alert.js");
+/* harmony import */ var _helperFiles_auth__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../../../helperFiles/auth */ "./resources/js/helperFiles/auth.js");
+/* harmony import */ var _contexts_AuthContext__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../../contexts/AuthContext */ "./resources/js/components/contexts/AuthContext.js");
 
+
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
@@ -89359,22 +88746,20 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 
-
-
 function Categories(props) {
-  var _useState = react_usestateref__WEBPACK_IMPORTED_MODULE_4___default()([]),
+  var _useState = react_usestateref__WEBPACK_IMPORTED_MODULE_3___default()([]),
       _useState2 = _slicedToArray(_useState, 3),
       categories = _useState2[0],
       setCategories = _useState2[1],
       categoriesRef = _useState2[2];
 
-  var _useState3 = react_usestateref__WEBPACK_IMPORTED_MODULE_4___default()(),
+  var _useState3 = react_usestateref__WEBPACK_IMPORTED_MODULE_3___default()(),
       _useState4 = _slicedToArray(_useState3, 3),
       categoriesList = _useState4[0],
       setCategoriesList = _useState4[1],
       categoriesListRef = _useState4[2];
 
-  var _useState5 = react_usestateref__WEBPACK_IMPORTED_MODULE_4___default()(true),
+  var _useState5 = react_usestateref__WEBPACK_IMPORTED_MODULE_3___default()(true),
       _useState6 = _slicedToArray(_useState5, 2),
       first = _useState6[0],
       setFirst = _useState6[1];
@@ -89386,19 +88771,22 @@ function Categories(props) {
     var optionActivated = false;
 
     for (var i = 0; i < list.length; i++) {
-      if (props.selectedOptionId === list[i].id) {
+      if (props.selectedOptionId == list[i].id) {
         optionActivated = true;
       }
 
       if (Object.values(list[i].subCategories).length !== 0) {
+        var subCategories = createSorting(Object.values(list[i].subCategories));
         content.push( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement('li', {
           key: i,
-          className: "parent option" + (props.selectedOptionId === list[i].id ? " active" : ""),
+          className: "parent option" + (props.selectedOptionId == list[i].id ? " active open" : "") + (subCategories[0] ? ' open' : ''),
           onClick: props.handleSelectedOption,
           value: list[i].id,
           optionname: list[i].name
-        }, list[i].name));
-        var subCategories = createSorting(Object.values(list[i].subCategories));
+        }, [/*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement('span', {
+          className: 'change-status',
+          onClick: props.handleOptionStatus
+        }, ''), list[i].name]));
 
         if (subCategories[0]) {
           optionActivated = true;
@@ -89408,7 +88796,7 @@ function Categories(props) {
       } else {
         content.push( /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement('li', {
           key: i,
-          className: "option" + (props.selectedOptionId === list[i].id ? " active" : ""),
+          className: "option" + (props.selectedOptionId == list[i].id ? " active open" : ""),
           onClick: props.handleSelectedOption,
           value: list[i].id,
           optionname: list[i].name
@@ -89438,7 +88826,7 @@ function Categories(props) {
             switch (_context.prev = _context.next) {
               case 0:
                 _context.next = 2;
-                return axios__WEBPACK_IMPORTED_MODULE_7___default.a.request({
+                return axios__WEBPACK_IMPORTED_MODULE_6___default.a.request({
                   url: "category/getAll",
                   baseURL: baseUrl,
                   params: {
@@ -89494,6 +88882,7 @@ function Categories(props) {
   }, []);
   Object(react__WEBPACK_IMPORTED_MODULE_1__["useEffect"])(function () {
     setCategoriesList(createSorting(categoriesRef.current)[1]);
+    console.log('ss');
   }, [props.selectedOptionId]);
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
     className: "categories-options"
@@ -89501,44 +88890,140 @@ function Categories(props) {
 }
 
 function AddCategory(props) {
-  var _useState7 = react_usestateref__WEBPACK_IMPORTED_MODULE_4___default()("show"),
+  var _useState7 = react_usestateref__WEBPACK_IMPORTED_MODULE_3___default()("show"),
       _useState8 = _slicedToArray(_useState7, 3),
       selectInputStatues = _useState8[0],
       setSelectInputStatues = _useState8[1],
       selectInputStatuesRef = _useState8[2];
 
-  var _useState9 = react_usestateref__WEBPACK_IMPORTED_MODULE_4___default()({
-    id: 0,
-    name: "None"
+  var _useState9 = react_usestateref__WEBPACK_IMPORTED_MODULE_3___default()({
+    id: getQueryParam('group-parent-id'),
+    name: getQueryParam('group-parent-name')
   }),
       _useState10 = _slicedToArray(_useState9, 2),
       selectedOption = _useState10[0],
       setSelectedOption = _useState10[1];
 
-  var _useState11 = react_usestateref__WEBPACK_IMPORTED_MODULE_4___default()([]),
+  var _useState11 = react_usestateref__WEBPACK_IMPORTED_MODULE_3___default()([]),
       _useState12 = _slicedToArray(_useState11, 3),
       categories = _useState12[0],
       setCategories = _useState12[1],
       categoriesRef = _useState12[2];
 
-  var history = Object(react_router_dom__WEBPACK_IMPORTED_MODULE_5__["useHistory"])();
-  var alert = Object(react_alert__WEBPACK_IMPORTED_MODULE_8__["useAlert"])();
-  var authContext = Object(react__WEBPACK_IMPORTED_MODULE_1__["useContext"])(_contexts_AuthContext__WEBPACK_IMPORTED_MODULE_10__["AuthContext"]);
+  var history = Object(react_router_dom__WEBPACK_IMPORTED_MODULE_4__["useHistory"])();
+  var alert = Object(react_alert__WEBPACK_IMPORTED_MODULE_7__["useAlert"])();
+
+  var _useState13 = react_usestateref__WEBPACK_IMPORTED_MODULE_3___default()([]),
+      _useState14 = _slicedToArray(_useState13, 3),
+      parentsFamilyElement = _useState14[0],
+      setParentsFamilyElement = _useState14[1],
+      parentsFamilyElementRef = _useState14[2];
+
+  var authContext = Object(react__WEBPACK_IMPORTED_MODULE_1__["useContext"])(_contexts_AuthContext__WEBPACK_IMPORTED_MODULE_9__["AuthContext"]);
   Object(react__WEBPACK_IMPORTED_MODULE_1__["useEffect"])(function () {
-    Object(_helperFiles_auth__WEBPACK_IMPORTED_MODULE_9__["me"])('ADMIN').then(function (r) {
+    Object(_helperFiles_auth__WEBPACK_IMPORTED_MODULE_8__["me"])('ADMIN').then(function (r) {
       if (!r) {
         history.push('/');
       }
     });
-    console.log(props.location.search('parent_group_id'));
   }, [authContext.auth]);
+  Object(react__WEBPACK_IMPORTED_MODULE_1__["useEffect"])(function () {
+    if (getQueryParam('group-parent-id') !== undefined) {
+      categoryFamilyTreeFunc(getQueryParam('group-parent-id'));
+    }
+  }, []);
+
+  function categoryFamilyTreeFunc(_x2) {
+    return _categoryFamilyTreeFunc2.apply(this, arguments);
+  }
+
+  function _categoryFamilyTreeFunc2() {
+    _categoryFamilyTreeFunc2 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4(parent_id) {
+      var parentID, baseUrl, _token, _categoryFamilyTreeFunc, _categoryFamilyTreeFunc3;
+
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee4$(_context4) {
+        while (1) {
+          switch (_context4.prev = _context4.next) {
+            case 0:
+              _categoryFamilyTreeFunc3 = function _categoryFamilyTreeFu2() {
+                _categoryFamilyTreeFunc3 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3() {
+                  return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
+                    while (1) {
+                      switch (_context3.prev = _context3.next) {
+                        case 0:
+                          console.log(parentID);
+
+                          if (!(parentID !== 0)) {
+                            _context3.next = 6;
+                            break;
+                          }
+
+                          _context3.next = 4;
+                          return axios__WEBPACK_IMPORTED_MODULE_6___default.a.request({
+                            url: "category/get/" + parentID,
+                            baseURL: baseUrl,
+                            params: {
+                              'api_password': localStorage.getItem('api_password'),
+                              'token': _token
+                            },
+                            method: "GET"
+                          }).then(function (response) {
+                            console.log(response);
+                            setParentsFamilyElement([response.data.category].concat(_toConsumableArray(parentsFamilyElementRef.current)));
+                            parentID = response.data.category.parent_group;
+
+                            _categoryFamilyTreeFunc();
+                          })["catch"](function (error) {
+                            console.log(error.response);
+                          });
+
+                        case 4:
+                          _context3.next = 7;
+                          break;
+
+                        case 6:
+                          console.log("tree", parentsFamilyElementRef.current);
+
+                        case 7:
+                        case "end":
+                          return _context3.stop();
+                      }
+                    }
+                  }, _callee3);
+                }));
+                return _categoryFamilyTreeFunc3.apply(this, arguments);
+              };
+
+              _categoryFamilyTreeFunc = function _categoryFamilyTreeFu() {
+                return _categoryFamilyTreeFunc3.apply(this, arguments);
+              };
+
+              parentID = parent_id;
+              baseUrl = localStorage.getItem('host') + localStorage.getItem('api_extension');
+              _token = localStorage.getItem('_token');
+              setParentsFamilyElement([]);
+
+              _categoryFamilyTreeFunc();
+
+            case 7:
+            case "end":
+              return _context4.stop();
+          }
+        }
+      }, _callee4);
+    }));
+    return _categoryFamilyTreeFunc2.apply(this, arguments);
+  }
+
   Object(react__WEBPACK_IMPORTED_MODULE_1__["useEffect"])(function () {
     var baseUrl = localStorage.getItem('host') + localStorage.getItem('api_extension');
 
     var _token = localStorage.getItem('_token');
 
-    var query = Object(query_string__WEBPACK_IMPORTED_MODULE_11__["parse"])(location.search);
-    var parentGroupId = query.parent_group_id;
+    setSelectedOption({
+      id: getQueryParam('group-parent-id'),
+      name: getQueryParam('group-parent-name')
+    });
 
     function getCategories() {
       return _getCategories2.apply(this, arguments);
@@ -89551,7 +89036,7 @@ function AddCategory(props) {
             switch (_context2.prev = _context2.next) {
               case 0:
                 _context2.next = 2;
-                return axios__WEBPACK_IMPORTED_MODULE_7___default.a.request({
+                return axios__WEBPACK_IMPORTED_MODULE_6___default.a.request({
                   url: "category/getAll",
                   baseURL: baseUrl,
                   params: {
@@ -89576,15 +89061,19 @@ function AddCategory(props) {
     }
 
     getCategories();
-    console.log(parentGroupId);
   }, []);
 
-  var handleSelectInputStatues = function handleSelectInputStatues() {
+  var handleSelectInputStatus = function handleSelectInputStatus() {
     if (selectInputStatues === "") {
       setSelectInputStatues("show");
     } else {
       setSelectInputStatues("");
     }
+  };
+
+  var handleOptionStatus = function handleOptionStatus(e) {
+    e.preventDefault();
+    e.target.setAttribute('class', e.target.getAttribute('class').replace('open', ''));
   };
 
   var handleSelectedOption = function handleSelectedOption(values, setFieldValue) {
@@ -89620,7 +89109,8 @@ function AddCategory(props) {
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(formik__WEBPACK_IMPORTED_MODULE_2__["ErrorMessage"], {
       name: "name"
     }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
-      className: "select"
+      className: "select",
+      onClick: handleSelectInputStatus
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("select", {
       name: "parentGroup",
       className: "parent-group-input",
@@ -89636,8 +89126,7 @@ function AddCategory(props) {
         key: index
       });
     }) : ""), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
-      className: "parent-group-input-ui " + selectInputStatues,
-      onClick: handleSelectInputStatues
+      className: "parent-group-input-ui " + selectInputStatues
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
       className: "selected-option",
       value: selectedOption.id
@@ -89650,7 +89139,8 @@ function AddCategory(props) {
       onClick: handleSelectedOption(values, setFieldValue)
     }, "None"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(Categories, {
       selectedOptionId: selectedOption.id,
-      handleSelectedOption: handleSelectedOption(values, setFieldValue)
+      handleSelectedOption: handleSelectedOption(values, setFieldValue),
+      handleOptionStatus: handleOptionStatus
     })))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("input", {
       className: "add-category-btn",
       type: "submit",
@@ -89659,34 +89149,34 @@ function AddCategory(props) {
   };
 
   var schema = function schema() {
-    return yup__WEBPACK_IMPORTED_MODULE_6__["object"]().shape({
-      name: yup__WEBPACK_IMPORTED_MODULE_6__["string"]().required().min(3)
+    return yup__WEBPACK_IMPORTED_MODULE_5__["object"]().shape({
+      name: yup__WEBPACK_IMPORTED_MODULE_5__["string"]().required().min(3)
     });
   };
 
-  function onSubmit(_x2) {
+  function onSubmit(_x3) {
     return _onSubmit.apply(this, arguments);
   }
 
   function _onSubmit() {
-    _onSubmit = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3(values) {
-      var baseUrl, _token, response;
+    _onSubmit = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee5(values) {
+      var _baseUrl, _token2, response;
 
-      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee5$(_context5) {
         while (1) {
-          switch (_context3.prev = _context3.next) {
+          switch (_context5.prev = _context5.next) {
             case 0:
-              _context3.prev = 0;
-              baseUrl = localStorage.getItem('host') + localStorage.getItem('api_extension');
-              _token = localStorage.getItem('_token');
+              _context5.prev = 0;
+              _baseUrl = localStorage.getItem('host') + localStorage.getItem('api_extension');
+              _token2 = localStorage.getItem('_token');
               console.log(values);
-              _context3.next = 6;
-              return axios__WEBPACK_IMPORTED_MODULE_7___default.a.request({
+              _context5.next = 6;
+              return axios__WEBPACK_IMPORTED_MODULE_6___default.a.request({
                 url: "category/add",
-                baseURL: baseUrl,
+                baseURL: _baseUrl,
                 data: {
                   'api_password': localStorage.getItem('api_password'),
-                  'token': _token,
+                  'token': _token2,
                   'name': values.name,
                   'parentGroup': values.parentGroup
                 },
@@ -89712,23 +89202,23 @@ function AddCategory(props) {
               });
 
             case 6:
-              response = _context3.sent;
-              _context3.next = 14;
+              response = _context5.sent;
+              _context5.next = 14;
               break;
 
             case 9:
-              _context3.prev = 9;
-              _context3.t0 = _context3["catch"](0);
-              console.log(_context3.t0);
+              _context5.prev = 9;
+              _context5.t0 = _context5["catch"](0);
+              console.log(_context5.t0);
               alert.error(__('generalError', 'messages'));
-              return _context3.abrupt("return", true);
+              return _context5.abrupt("return", true);
 
             case 14:
             case "end":
-              return _context3.stop();
+              return _context5.stop();
           }
         }
-      }, _callee3, null, [[0, 9]]);
+      }, _callee5, null, [[0, 9]]);
     }));
     return _onSubmit.apply(this, arguments);
   }
@@ -89742,22 +89232,30 @@ function AddCategory(props) {
     className: "breadcrumb"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
     className: "breadcrumb-item"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_5__["Link"], {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_4__["Link"], {
     to: "/admin/dashboard/",
     onClick: props.handleRerenderEffect
   }, "Home")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
     className: "breadcrumb-item"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_5__["Link"], {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_4__["Link"], {
     to: "/admin/dashboard/categories",
     onClick: props.handleRerenderEffect
-  }, "Categories")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
+  }, "Categories")), parentsFamilyElementRef.current.map(function (element) {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
+      className: "breadcrumb-item",
+      key: element.id
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_4__["Link"], {
+      to: '/admin/dashboard/category/' + element.id,
+      onClick: props.handleRerenderEffect
+    }, element.name));
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
     className: "breadcrumb-item active"
   }, "Add Category"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
     className: "add-category"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(formik__WEBPACK_IMPORTED_MODULE_2__["Formik"], {
     initialValues: {
       name: "",
-      parentGroup: '0',
+      parentGroup: parseInt(getQueryParam('group-parent-id')),
       logo: ""
     },
     onSubmit: onSubmit,
@@ -90190,7 +89688,7 @@ function CategoryPage(props) {
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
     className: "category add-category"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Link"], {
-    to: "/admin/dashboard/categories/addcategory?parent_group_id=" + categoryID + "&parent_group_name=" + category.name
+    to: "/admin/dashboard/categories/addcategory?group-parent-id=" + categoryID + "&group-parent-name=" + category.name
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("span", {
     className: "add-btn"
   }, "+"))), categories !== [] ? categories.map(function (category, index) {
