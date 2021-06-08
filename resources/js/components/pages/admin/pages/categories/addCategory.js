@@ -221,18 +221,27 @@ export default function AddCategory(props) {
     }
 
     let handleOptionStatus = (e) => {
-        e.preventDefault();
-        e.target.setAttribute('class', e.target.getAttribute('class').replace('open', ''));
+        e.stopPropagation();
+        console.log("HH");
+        if(e.target.parentElement.getAttribute('class').search('open') == -1) {
+            e.target.parentElement.setAttribute('class', e.target.parentElement.getAttribute('class') + ' open');
+        } else  {
+            e.target.parentElement.setAttribute('class', e.target.parentElement.getAttribute('class').replace('open', ''));
+        }
     }
 
     let handleSelectedOption = (values, setFieldValue) => e => {
         const id = e.target.getAttribute("value");
 
-        setSelectedOption({
-            id,
-            name: e.target.getAttribute("optionname")
-        });
-        setFieldValue("parentGroup", id);
+        if(selectedOption.id !== id) {
+            e.stopPropagation();
+            setSelectedOption({
+                id,
+                name: e.target.getAttribute("optionname")
+            });
+            setFieldValue("parentGroup", id);
+        }
+
     }
 
     let form = (formProps) => {

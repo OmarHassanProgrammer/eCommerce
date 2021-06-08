@@ -38,3 +38,10 @@ Route::group(['prefix' => 'category'], function() {
     Route::post('edit', 'CategoryController@update');
     Route::get('delete', 'CategoryController@delete');
 });
+Route::group(['prefix' => 'product'], function() {
+    Route::get('getAll', 'ProductController@getProducts');
+    Route::get('get/{id}', 'ProductController@getProduct');
+    Route::post('add', 'ProductController@addProduct');
+    Route::post('edit', 'ProductController@update');
+    Route::get('delete', 'ProductController@delete');
+});

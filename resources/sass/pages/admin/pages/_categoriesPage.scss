@@ -143,7 +143,7 @@
                     justify-self: end;
                     clip-path: polygon(100% 0%, 0 0%, 50% 100%);
                     position: relative;
-                    top: 10px;
+                    top: 8px;
                     right: 10px
                 }
                 select {
@@ -177,9 +177,6 @@
                         font-size: 1.1rem;
                         ul {
                             list-style: none;
-                            &.has-active-option {
-                                display: block !important;
-                            }
                         }
                         .categories-options > ul  {
                             padding: 0;

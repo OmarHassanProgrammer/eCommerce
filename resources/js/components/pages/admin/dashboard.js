@@ -10,6 +10,7 @@ import TradersPage from "./pages/tradersPage";
 import CategoriesPage from "./pages/categories/categoriesPage";
 import AddCategory from "./pages/categories/addCategory";
 import CategoryPage from "./pages/categories/categoryPage";
+import ProductsPage from "./pages/productsPage";
 
 export default function Dashboard() {
     const history = useHistory();
@@ -26,6 +27,9 @@ export default function Dashboard() {
 
     useEffect(() => {
         switch(window.location.pathname) {
+            case "":
+                setActivePage('MAIN_PAGE');
+                break;
             case "/admin/dashboard":
                 setActivePage('HOME');
                 break;
@@ -37,6 +41,9 @@ export default function Dashboard() {
                 break;
             case "/admin/dashboard/categories":
                 setActivePage('CATEGORIES');
+                break;
+            case "/admin/dashboard/products":
+                setActivePage('PRODUCTS');
                 break;
         }
     }, [rerenderHref]);
@@ -64,6 +71,11 @@ export default function Dashboard() {
                     <h2 className="title">Dashboard</h2>
                     </div>
                     <ul className="links">
+                        <li className={ "link " + (activePage === 'MAIN_PAGE'? 'active':'') } >
+                            <Link to={``} onClick={handleRerenderEffect}>
+                                <i className="fa fa-home"></i> <label>Main Page</label>
+                            </Link>
+                        </li>
                        <li className={ "link " + (activePage === 'HOME'? 'active':'') } >
                            <Link to={`${url}`} onClick={handleRerenderEffect}>
                                <i className="fa fa-home"></i> <label>Home</label>
@@ -82,6 +94,11 @@ export default function Dashboard() {
                         <li className={"link " + (activePage === 'CATEGORIES'? 'active':'') }>
                             <Link to={`${url}/categories`} onClick={handleRerenderEffect}>
                                 <i className="fa fa-drivers-license-o"></i> <label>Categories</label>
+                            </Link>
+                        </li>
+                        <li className={"link " + (activePage === 'PRODUCTS'? 'active':'') }>
+                            <Link to={`${url}/products`} onClick={handleRerenderEffect}>
+                                <i className="fa fa-drivers-license-o"></i> <label>Products</label>
                             </Link>
                         </li>
                     </ul>
@@ -140,6 +157,11 @@ export default function Dashboard() {
                                 path={`/admin/dashboard/categories/addcategory`} exact
                                 render={() => (
                                     <AddCategory handleRerenderEffect={handleRerenderEffect} />
+                                )} />
+                            <Route
+                                path={`/admin/dashboard/products`} exact
+                                render={() => (
+                                    <ProductsPage handleRerenderEffect={handleRerenderEffect} />
                                 )} />
                         </Switch>
                     </div>

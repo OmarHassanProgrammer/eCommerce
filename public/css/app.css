@@ -11853,7 +11853,7 @@ a.text-dark:focus {
   -webkit-clip-path: polygon(100% 0%, 0 0%, 50% 100%);
           clip-path: polygon(100% 0%, 0 0%, 50% 100%);
   position: relative;
-  top: 10px;
+  top: 8px;
   right: 10px;
 }
 
@@ -11903,11 +11903,6 @@ a.text-dark:focus {
 .dashboard-page .content .my-container .body .categories-page .add-category .add-category-form .select .parent-group-input-ui .options ul,
 .dashboard-page .content .my-container .body .category-page .add-category .add-category-form .select .parent-group-input-ui .options ul {
   list-style: none;
-}
-
-.dashboard-page .content .my-container .body .categories-page .add-category .add-category-form .select .parent-group-input-ui .options ul.has-active-option,
-.dashboard-page .content .my-container .body .category-page .add-category .add-category-form .select .parent-group-input-ui .options ul.has-active-option {
-  display: block !important;
 }
 
 .dashboard-page .content .my-container .body .categories-page .add-category .add-category-form .select .parent-group-input-ui .options .categories-options > ul,

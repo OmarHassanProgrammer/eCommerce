@@ -12,7 +12,6 @@ class CategoryController extends Controller
     use GeneralTrait;
 
     public function __construct() {
-        $this->middleware('jwt:user-api', ['except' => ['login', 'register']]);
     }
 
     public function getCategories(Request $request) {
