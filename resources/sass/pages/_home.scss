@@ -1,0 +1,41 @@
+.home-page {
+    .upper-nav {
+        overflow: hidden;
+        padding: 5px 0;
+        background-color: #1b1e21;
+        .nav-list {
+            list-style: none;
+            margin: 0;
+            display: inline-flex;
+            font-size: .85rem;
+            padding-left: 0;
+            .item {
+                position: relative;
+                &:not(:last-child):after {
+                    content: "";
+                    width: 1px;
+                    height: 100%;
+                    background-color: #aaa;
+                    position: absolute;
+                    right: 0;
+                }
+            }
+        }
+        .left-list {
+            float: left;
+            font-size: .7rem;
+            color: #aaa;
+            .item {
+                padding: 0 5px;
+            }
+        }
+        .right-list {
+            float: right;
+            font-size: .85rem;
+            color: #ddd;
+            .item {
+                padding: 0 8px;
+            }
+        }
+    }
+}

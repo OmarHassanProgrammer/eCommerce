@@ -9,6 +9,8 @@
         <!-- Fonts -->
         <link rel="stylesheet" href={{ url('/css/font-awesome.min.css') }}>
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Mate+SC&display=swap" rel="stylesheet">
         <link rel="stylesheet" href={{ url('/css/app.css') }}>
     </head>
     <body>

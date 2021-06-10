@@ -36,7 +36,7 @@ export default function ProductsPage(props) {
             <div aria-label="breadcrumb" className="breadcrumb-container">
                 <ol className="breadcrumb">
                     <li className="breadcrumb-item">
-                        <Link to='/admin/dashboard/' onClick={props.handleRerenderEffect} >Home</Link>
+                        <Link to='/admin/dashboard' onClick={props.handleRerenderEffect} >Home</Link>
                     </li>
                     <li className="breadcrumb-item active" aria-current="page">Products</li>
                 </ol>
@@ -44,11 +44,19 @@ export default function ProductsPage(props) {
             <div className="products">
                 {
                     products !== []?
-                        products.map((produc, index) => (
-                            <div className="user" key={index}>
+                        products.map((product, index) => (
+                            <div className="product" key={index}>
                                 <div className="image"></div>
-                                <div className="name">
-                                    { product.name }
+                                <div className="middle">
+                                    <div className="name">
+                                        { product.name }
+                                    </div>
+                                    <div className="quantity">
+                                        {product.quantity}
+                                    </div>
+                                </div>
+                                <div className="price">
+                                    {product.price}$
                                 </div>
                             </div>
                         )):""

@@ -16,13 +16,13 @@ class CategoryController extends Controller
 
     public function getCategories(Request $request) {
         if($request->parentGroup === "ALL") {
-            if($request->pagination === 0) {
+            if($request->pagination == 0) {
                 return Category::all();
             } else {
-                return Category::paginate($request->pagination);
+                return Category::paginate($request->pagination)["data"];
             }
         } else {
-            if($request->pagination === 0) {
+            if($request->pagination == 0) {
                 return Category::where('parent_group', $request->parentGroup)->orderBy('created_at', 'desc');
             } else {
                 return Category::where('parent_group', $request->parentGroup)->orderBy('created_at', 'desc')->paginate($request->pagination);

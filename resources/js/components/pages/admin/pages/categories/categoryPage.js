@@ -115,7 +115,7 @@ export default function CategoryPage(props) {
             <div aria-label="breadcrumb" className="breadcrumb-container">
                 <ol className="breadcrumb">
                     <li className="breadcrumb-item">
-                        <Link to='/admin/dashboard/' onClick={props.handleRerenderEffect} >Home</Link>
+                        <Link to='/admin/dashboard' onClick={props.handleRerenderEffect} >Home</Link>
                     </li>
                     <li className="breadcrumb-item">
                         <Link to='/admin/dashboard/categories' onClick={props.handleRerenderEffect} >Categories</Link>

@@ -88110,12 +88110,13 @@ window.__ = function (wordKey, file) {
 };
 
 window.getQueryParam = function (paramName) {
+  var defaultVal = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'Default';
   var url = decodeURI(window.location.href);
   var paramStart = url.search(paramName + "=") + paramName.length + 1;
   var paramEnd = 0;
   var paramVal = "";
 
-  if (paramStart !== -1) {
+  if (paramStart !== paramName.length) {
     paramEnd = url.slice(paramStart).search('&');
 
     if (paramEnd === -1) {
@@ -88124,7 +88125,7 @@ window.getQueryParam = function (paramName) {
       paramVal = url.slice(paramStart, paramEnd + paramStart);
     }
   } else {
-    return "null";
+    paramVal = defaultVal;
   }
 
   return paramVal;
@@ -88441,7 +88442,57 @@ function HomePage() {
   }, [authContext.auth._token]);
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "home-page"
-  }, links);
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "upper-nav"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "container"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", {
+    className: "left-list nav-list"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
+    className: "item"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+    className: "fa fa-truck",
+    "aria-hidden": "true"
+  }), " Free Shipping"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
+    className: "item"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+    className: "fa fa-refresh",
+    "aria-hidden": "true"
+  }), " Free Returns"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
+    className: "item"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+    className: "fa fa-usd",
+    "aria-hidden": "true"
+  }), " Cash on Delivery"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
+    className: "item"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("i", {
+    className: "fa fa-clock-o",
+    "aria-hidden": "true"
+  }), " 24 Work Hours")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", {
+    className: "right-list nav-list"
+  }, !authContext.auth._token ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
+    className: "item"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Link"], {
+    to: "login",
+    key: "login"
+  }, "Log in"), " or ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_1__["Link"], {
+    to: "register",
+    key: "register"
+  }, "Register")) : "", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
+    className: "item"
+  }, "Daily Offers"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
+    className: "item"
+  }, "Buy what you need"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
+    className: "item"
+  }, "Sell with us"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", {
+    className: "item"
+  }, "English")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "main-nav"
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "content"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "container"
+  }, links)));
 }
 
 /***/ }),
@@ -88816,6 +88867,7 @@ function Categories(props) {
           value: list[i].id,
           optionname: list[i].name
         }, [/*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement('span', {
+          key: 1,
           className: 'change-status',
           onClick: props.handleOptionStatus
         }, ''), list[i].name]));
@@ -88865,12 +88917,13 @@ function Categories(props) {
                     'api_password': localStorage.getItem('api_password'),
                     'token': _token,
                     'parentGroup': 'ALL',
-                    'pagination': 0
+                    'pagination': 16
                   },
                   method: "GET"
                 }).then(function (response) {
-                  var _categories = response.data.data;
+                  var _categories = response.data;
                   var newCategories = [];
+                  console.log(response.data);
 
                   _categories.map(function (category, index) {
                     category.subCategories = {};
@@ -88929,8 +88982,8 @@ function AddCategory(props) {
       selectInputStatuesRef = _useState8[2];
 
   var _useState9 = react_usestateref__WEBPACK_IMPORTED_MODULE_3___default()({
-    id: getQueryParam('group-parent-id'),
-    name: getQueryParam('group-parent-name')
+    id: getQueryParam('group-parent-id', 0),
+    name: getQueryParam('group-parent-name', 'None')
   }),
       _useState10 = _slicedToArray(_useState9, 2),
       selectedOption = _useState10[0],
@@ -88960,9 +89013,7 @@ function AddCategory(props) {
     });
   }, [authContext.auth]);
   Object(react__WEBPACK_IMPORTED_MODULE_1__["useEffect"])(function () {
-    if (getQueryParam('group-parent-id') !== undefined) {
-      categoryFamilyTreeFunc(getQueryParam('group-parent-id'));
-    }
+    categoryFamilyTreeFunc(getQueryParam('group-parent-id', 0));
   }, []);
 
   function categoryFamilyTreeFunc(_x2) {
@@ -89053,8 +89104,8 @@ function AddCategory(props) {
     var _token = localStorage.getItem('_token');
 
     setSelectedOption({
-      id: getQueryParam('group-parent-id'),
-      name: getQueryParam('group-parent-name')
+      id: getQueryParam('group-parent-id', 0),
+      name: getQueryParam('group-parent-name', 'None')
     });
 
     function getCategories() {
@@ -89079,7 +89130,7 @@ function AddCategory(props) {
                   },
                   method: "GET"
                 }).then(function (response) {
-                  setCategories(response.data.data);
+                  setCategories(response.data);
                 });
 
               case 2:
@@ -89175,7 +89226,7 @@ function AddCategory(props) {
     }, selectedOption.name), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
       className: "options"
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
-      className: "option " + (selectedOption.id === 0 ? "active" : ""),
+      className: "option " + (selectedOption.id == 0 ? "active" : ""),
       value: "0",
       optionname: "None",
       onClick: handleSelectedOption(values, setFieldValue)
@@ -89275,29 +89326,21 @@ function AddCategory(props) {
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
     className: "breadcrumb-item"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_4__["Link"], {
-    to: "/admin/dashboard/",
+    to: "/admin/dashboard",
     onClick: props.handleRerenderEffect
   }, "Home")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
     className: "breadcrumb-item"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_4__["Link"], {
     to: "/admin/dashboard/categories",
     onClick: props.handleRerenderEffect
-  }, "Categories")), parentsFamilyElementRef.current.map(function (element) {
-    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
-      className: "breadcrumb-item",
-      key: element.id
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_4__["Link"], {
-      to: '/admin/dashboard/category/' + element.id,
-      onClick: props.handleRerenderEffect
-    }, element.name));
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
+  }, "Categories")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
     className: "breadcrumb-item active"
   }, "Add Category"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
     className: "add-category"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(formik__WEBPACK_IMPORTED_MODULE_2__["Formik"], {
     initialValues: {
       name: "",
-      parentGroup: parseInt(getQueryParam('group-parent-id')),
+      parentGroup: parseInt(getQueryParam('group-parent-id', 0)),
       logo: ""
     },
     onSubmit: onSubmit,
@@ -89419,7 +89462,7 @@ function CategoriesPage(props) {
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
     className: "breadcrumb-item"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_3__["Link"], {
-    to: "/admin/dashboard/",
+    to: "/admin/dashboard",
     onClick: props.handleRerenderEffect
   }, "Home")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
     className: "breadcrumb-item active",
@@ -89707,7 +89750,7 @@ function CategoryPage(props) {
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
     className: "breadcrumb-item"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Link"], {
-    to: "/admin/dashboard/",
+    to: "/admin/dashboard",
     onClick: props.handleRerenderEffect
   }, "Home")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
     className: "breadcrumb-item"
@@ -89866,9 +89909,10 @@ function HomePage(props) {
                   },
                   method: "GET"
                 }).then(function (response) {
+                  console.log(response);
                   setTraders(response.data.data);
                 })["catch"](function (error) {
-                  console.log(error.response);
+                  console.log(error);
                 });
 
               case 2:
@@ -89907,7 +89951,8 @@ function HomePage(props) {
   }, users.map(function (user, index) {
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
       className: "new-user col-1",
-      key: index
+      key: index,
+      "data-id": user.id
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
       className: "image"
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
@@ -89930,7 +89975,8 @@ function HomePage(props) {
   }, traders.map(function (trader, index) {
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
       className: "new-trader col-1",
-      key: index
+      key: index,
+      "data-id": trader.id
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
       className: "image"
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
@@ -90038,22 +90084,28 @@ function ProductsPage(props) {
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
     className: "breadcrumb-item"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Link"], {
-    to: "/admin/dashboard/",
+    to: "/admin/dashboard",
     onClick: props.handleRerenderEffect
   }, "Home")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
     className: "breadcrumb-item active",
     "aria-current": "page"
   }, "Products"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
     className: "products"
-  }, products !== [] ? products.map(function (produc, index) {
+  }, products !== [] ? products.map(function (product, index) {
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
-      className: "user",
+      className: "product",
       key: index
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
       className: "image"
     }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+      className: "middle"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
       className: "name"
-    }, product.name));
+    }, product.name), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+      className: "quantity"
+    }, product.quantity)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+      className: "price"
+    }, product.price, "$"));
   }) : ""));
 }
 
@@ -90164,7 +90216,7 @@ function TradersPage(props) {
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
     className: "breadcrumb-item"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Link"], {
-    to: "/admin/dashboard/",
+    to: "/admin/dashboard",
     onClick: props.handleRerenderEffect
   }, "Home")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
     className: "breadcrumb-item active",
@@ -90290,7 +90342,7 @@ function UsersPage(props) {
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
     className: "breadcrumb-item"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Link"], {
-    to: "/admin/dashboard/",
+    to: "/admin/dashboard",
     onClick: props.handleRerenderEffect
   }, "Home")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
     className: "breadcrumb-item active",

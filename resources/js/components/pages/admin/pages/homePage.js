@@ -44,10 +44,11 @@ export default function HomePage(props) {
                 method: "GET"
             })
                 .then(response => {
+                    console.log(response);
                     setTraders(response.data.data);
                 })
                 .catch(error => {
-                    console.log(error.response);
+                    console.log(error);
                 });
         }
         getTraders();
@@ -68,7 +69,7 @@ export default function HomePage(props) {
                 <ol className="new-users-list row">
                     {
                         users.map((user, index) => (
-                            <div className="new-user col-1" key={index}>
+                            <div className="new-user col-1" key={index} data-id={user.id}>
                                 <div className="image">
                                     <div className="image-content"></div>
                                 </div>
@@ -88,7 +89,7 @@ export default function HomePage(props) {
                 <ol className="new-traders-list row">
                     {
                         traders.map((trader, index) => (
-                            <div className="new-trader col-1" key={index}>
+                            <div className="new-trader col-1" key={index} data-id={trader.id}>
                                 <div className="image">
                                     <div className="image-content"></div>
                                 </div>

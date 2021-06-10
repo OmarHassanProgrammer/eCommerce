@@ -42,7 +42,7 @@ export default function TradersPage(props) {
             <div aria-label="breadcrumb" className="breadcrumb-container">
                 <ol className="breadcrumb">
                     <li className="breadcrumb-item">
-                        <Link to='/admin/dashboard/' onClick={props.handleRerenderEffect} >Home</Link>
+                        <Link to='/admin/dashboard' onClick={props.handleRerenderEffect} >Home</Link>
                     </li>
                     <li className="breadcrumb-item active" aria-current="page">Traders</li>
                 </ol>

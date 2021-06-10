@@ -34,7 +34,7 @@ function Categories(props) {
                             value: list[i].id,
                             optionname: list[i].name}
                     ,[
-                        React.createElement('span', {className: 'change-status', onClick: props.handleOptionStatus}, ''),
+                        React.createElement('span', {key: 1, className: 'change-status', onClick: props.handleOptionStatus}, ''),
                         list[i].name]));
 
                 if(subCategories[0]) {
@@ -69,14 +69,15 @@ function Categories(props) {
                     'api_password': localStorage.getItem('api_password'),
                     'token': _token,
                     'parentGroup': 'ALL',
-                    'pagination': 0
+                    'pagination': 16
                 },
                 method: "GET"
             })
                 .then(response => {
-                    let _categories = response.data.data;
+                    let _categories = response.data;
                     let newCategories = [];
 
+                    console.log(response.data)
                     _categories.map((category, index) => {
                         category.subCategories = {};
                     });
@@ -122,8 +123,8 @@ function Categories(props) {
 export default function AddCategory(props) {
     const [selectInputStatues, setSelectInputStatues, selectInputStatuesRef] = useState("show");
     const [selectedOption, setSelectedOption] = useState({
-        id: getQueryParam('group-parent-id'),
-        name: getQueryParam('group-parent-name')
+        id: getQueryParam('group-parent-id', 0),
+        name: getQueryParam('group-parent-name', 'None')
     });
     const [categories, setCategories, categoriesRef] = useState([]);
     let history = useHistory();
@@ -141,9 +142,7 @@ export default function AddCategory(props) {
     }, [authContext.auth]);
 
     useEffect(() => {
-        if(getQueryParam('group-parent-id') !== undefined) {
-            categoryFamilyTreeFunc(getQueryParam('group-parent-id'));
-        }
+        categoryFamilyTreeFunc(getQueryParam('group-parent-id', 0));
     }, []);
 
     async function categoryFamilyTreeFunc(parent_id) {
@@ -187,8 +186,8 @@ export default function AddCategory(props) {
         const baseUrl = localStorage.getItem('host') + localStorage.getItem('api_extension');
         const _token = localStorage.getItem('_token');
         setSelectedOption({
-            id: getQueryParam('group-parent-id'),
-            name: getQueryParam('group-parent-name')
+            id: getQueryParam('group-parent-id', 0),
+            name: getQueryParam('group-parent-name', 'None')
         });
 
         async function getCategories() {
@@ -204,7 +203,7 @@ export default function AddCategory(props) {
                 method: "GET"
             })
                 .then(response => {
-                    setCategories(response.data.data);
+                    setCategories(response.data);
                 });
         }
 
@@ -274,7 +273,7 @@ export default function AddCategory(props) {
                 <div className={"parent-group-input-ui " + selectInputStatues} >
                     <div className="selected-option" value={selectedOption.id}>{selectedOption.name}</div>
                     <div className="options">
-                        <div className={"option " + (selectedOption.id === 0?"active":"")} value="0" optionname="None" onClick={handleSelectedOption(values, setFieldValue)} >None</div>
+                        <div className={"option " + (selectedOption.id == 0?"active":"")} value="0" optionname="None" onClick={handleSelectedOption(values, setFieldValue)} >None</div>
                         <Categories selectedOptionId={selectedOption.id} handleSelectedOption={handleSelectedOption(values, setFieldValue)} handleOptionStatus={handleOptionStatus}/>
                     </div>
                 </div>
@@ -340,25 +339,17 @@ export default function AddCategory(props) {
             <div aria-label="breadcrumb" className="breadcrumb-container">
                 <ol className="breadcrumb">
                     <li className="breadcrumb-item">
-                        <Link to='/admin/dashboard/' onClick={props.handleRerenderEffect} >Home</Link>
+                        <Link to='/admin/dashboard' onClick={props.handleRerenderEffect} >Home</Link>
                     </li>
                     <li className="breadcrumb-item">
                         <Link to='/admin/dashboard/categories' onClick={props.handleRerenderEffect} >Categories</Link>
                     </li>
-                    {
-                        parentsFamilyElementRef.current.map(element => {
-                            return  (
-                                <li className="breadcrumb-item" key={element.id}>
-                                    <Link to={'/admin/dashboard/category/' + element.id} onClick={props.handleRerenderEffect} >{ element.name }</Link>
-                                </li>)
-                        })
-                    }
                     <li className="breadcrumb-item active" >Add Category</li>
                 </ol>
             </div>
             <div className="add-category">
                 <Formik
-                    initialValues={{name: "", parentGroup: parseInt(getQueryParam('group-parent-id')), logo: ""}}
+                    initialValues={{name: "", parentGroup: parseInt(getQueryParam('group-parent-id', 0)), logo: ""}}
                     onSubmit={onSubmit}
                     render={form}
                     validationSchema={schema()} />

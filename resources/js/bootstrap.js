@@ -68,13 +68,13 @@ window.__ = (wordKey, file) => {
         }
     }
 }
-window.getQueryParam = (paramName) => {
+window.getQueryParam = (paramName, defaultVal = 'Default') => {
     let url = decodeURI(window.location.href);
     let paramStart = url.search(paramName + "=") + paramName.length + 1;
     let paramEnd = 0;
     let paramVal = "";
 
-    if(paramStart !== -1) {
+    if(paramStart !== paramName.length) {
         paramEnd = url.slice(paramStart).search('&');
         if(paramEnd === -1) {
             paramVal = url.slice(paramStart);
@@ -82,7 +82,7 @@ window.getQueryParam = (paramName) => {
             paramVal = url.slice(paramStart, paramEnd + paramStart);
         }
     } else {
-        return "null";
+        paramVal = defaultVal;
     }
     return paramVal;
 }
