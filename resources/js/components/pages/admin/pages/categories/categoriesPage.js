@@ -27,15 +27,14 @@ export default function CategoriesPage(props) {
                 baseURL: baseUrl,
                 params: {
                     'api_password': localStorage.getItem('api_password'),
-                    'token': _token,
-                    'parentGroup': 0,
+                    'parentGroup': "ALL",
                     'pagination': 0
                 },
                 method: "GET"
             })
                 .then(response => {
                     console.log(response.data);
-                    setCategories(response.data.data);
+                    setCategories(response.data);
                 })
                 .catch(error => {
                     console.log(error.response);

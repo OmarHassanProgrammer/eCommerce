@@ -19,7 +19,7 @@ class CategoryController extends Controller
             if($request->pagination == 0) {
                 return Category::all();
             } else {
-                return Category::paginate($request->pagination)["data"];
+                return Category::paginate($request->pagination);
             }
         } else {
             if($request->pagination == 0) {

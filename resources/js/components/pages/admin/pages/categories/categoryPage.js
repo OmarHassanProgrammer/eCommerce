@@ -29,8 +29,7 @@ export default function CategoryPage(props) {
                 url: "category/get/" + categoryID,
                 baseURL: baseUrl,
                 params: {
-                    'api_password': localStorage.getItem('api_password'),
-                    'token': _token,
+                    'api_password': localStorage.getItem('api_password')
                 },
                 method: "GET"
             })
