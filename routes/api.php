@@ -33,6 +33,7 @@ Route::group(['namespace' => 'Auth', 'prefix' => 'auth'], function() {
 });
 Route::group(['prefix' => 'category'], function() {
     Route::get('getAll', 'CategoryController@getCategories');
+    Route::get('getTopCategories', 'CategoryController@getTopCategories');
     Route::get('get/{id}', 'CategoryController@getCategory');
     Route::post('add', 'CategoryController@addCategory');
     Route::post('edit', 'CategoryController@update');

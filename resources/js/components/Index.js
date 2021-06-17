@@ -6,7 +6,7 @@ import {BrowserRouter, Route, Switch} from "react-router-dom";
 import {LoginPage} from "./pages/auth/LoginPage";
 import {RegisterPage} from "./pages/auth/RegisterPage";
 import {LogoutPage} from "./pages/auth/LogoutPage";
-import {HomePage} from "./pages/HomePage";
+import {MainPage} from "./pages/MainPage";
 import {AuthProvider, AuthContext} from "./contexts/AuthContext";
 import Dashboard from "./pages/admin/dashboard";
 import {isAuthenticated} from "../helperFiles/auth";
@@ -24,7 +24,7 @@ function Index() {
         <BrowserRouter>
             <div className="App">
                 <Switch>
-                    <Route path="/" exact component={HomePage} />
+                    <Route path="/" exact component={MainPage} />
                     <Route path="/login" exact component={LoginPage} />
                     <Route path="/register" exact component={RegisterPage} />
                     <Route path="/logout" exact component={LogoutPage} />

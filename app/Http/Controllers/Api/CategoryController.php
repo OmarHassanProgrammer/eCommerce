@@ -10,8 +10,12 @@ use Illuminate\Http\Request;
 class CategoryController extends Controller
 {
     use GeneralTrait;
+    public $topCategories;
 
     public function __construct() {
+        $this->topCategories = [
+            20, 21, 22, 23, 24, 25, 26
+        ];
     }
 
     public function getCategories(Request $request) {
@@ -28,6 +32,17 @@ class CategoryController extends Controller
                 return Category::where('parent_group', $request->parentGroup)->orderBy('created_at', 'desc')->paginate($request->pagination);
             }
         }
+    }
+
+    public function getTopCategories() {
+        $categories = [];
+
+        for($i = 0; $i < count($this->topCategories); $i++) {
+            $category = Category::find($this->topCategories[$i]);
+            $categories[$i] = $category;
+        }
+
+        return $categories;
     }
 
     public function getCategory($id) {

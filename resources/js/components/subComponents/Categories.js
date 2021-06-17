@@ -47,7 +47,7 @@ export default function Categories(props) {
             }
         }
 
-        let listUI = React.createElement('ul', {className: (optionActivated?"has-active-option":"")}, content);
+        let listUI = React.createElement('ul', {key: Math.random(), className: (optionActivated?"has-active-option":"")}, content);
 
         return [optionActivated, listUI];
     }

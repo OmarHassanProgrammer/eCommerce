@@ -31,6 +31,7 @@
         "query-string": "^7.0.0",
         "react-alert": "^7.0.2",
         "react-alert-template-basic": "^1.0.0",
+        "react-responsive-carousel": "^3.2.18",
         "react-router": "^5.2.0",
         "react-router-dom": "^5.2.0",
         "react-usestateref": "^1.0.5",

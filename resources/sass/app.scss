@@ -1,6 +1,9 @@
 // Fonts
 @import url('https://fonts.googleapis.com/css?family=Nunito');
 
+// General Styles
+@import "general";
+
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
 
@@ -8,7 +11,7 @@
 @import 'variables';
 
 //pages
-@import 'pages/home';
+@import 'pages/mainPage';
 @import 'pages/login';
 @import 'pages/register';
 @import 'pages/admin/dashboard';
