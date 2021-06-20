@@ -34,6 +34,7 @@ Route::group(['namespace' => 'Auth', 'prefix' => 'auth'], function() {
 Route::group(['prefix' => 'category'], function() {
     Route::get('getAll', 'CategoryController@getCategories');
     Route::get('getTopCategories', 'CategoryController@getTopCategories');
+    Route::get('getSubCategories/{id}', 'CategoryController@getSubCategories');
     Route::get('get/{id}', 'CategoryController@getCategory');
     Route::post('add', 'CategoryController@addCategory');
     Route::post('edit', 'CategoryController@update');
@@ -42,6 +43,7 @@ Route::group(['prefix' => 'category'], function() {
 Route::group(['prefix' => 'product'], function() {
     Route::get('getAll', 'ProductController@getProducts');
     Route::get('get/{id}', 'ProductController@getProduct');
+    Route::get('getCategoryProducts/{id}', 'ProductController@getCategoryProducts');
     Route::post('add', 'ProductController@addProduct');
     Route::post('edit', 'ProductController@update');
     Route::get('delete', 'ProductController@delete');

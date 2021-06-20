@@ -1,6 +1,6 @@
 import React, {useContext, useEffect} from 'react';
 import useState from 'react-usestateref';
-import {Link, Route, Switch, useHistory, useRouteMatch} from "react-router-dom";
+import {Link, Route, Switch, useHistory, useLocation, useRouteMatch} from "react-router-dom";
 import {AuthContext} from "../contexts/AuthContext";
 import {isAuthenticated, me} from "../../helperFiles/auth";
 import {Field, Formik, ErrorMessage} from "formik";
@@ -8,6 +8,7 @@ import * as Yup from "yup";
 import axios from "axios";
 import Categories from "../subComponents/Categories";
 import HomePage from "./mainPagePages/HomePage";
+import CategoryPage from "./mainPagePages/categoryPage";
 
 export function MainPage() {
     const authContext = useContext(AuthContext);
@@ -24,7 +25,7 @@ export function MainPage() {
     const [isAdmin, setIsAdmin, isAdminRef] = useState(false);
     const history = useHistory();
     let { path, url } = useRouteMatch();
-
+    let location = useLocation();
     useEffect(() => {
         isAuthenticated('ADMIN').then(r => {
             if(r) {
@@ -308,7 +309,7 @@ export function MainPage() {
                 </div>
             </div>
             <div className="upper-nav">
-                <div className="container">
+                <div className="container-fluid">
                     <ul className="left-list nav-list">
                         <li className="item"><i className="fa fa-truck" aria-hidden="true"></i> Free Shipping</li>
                         <li className="item"><i className="fa fa-refresh" aria-hidden="true"></i> Free Returns</li>
@@ -318,11 +319,11 @@ export function MainPage() {
                     <ul className="right-list nav-list">
                         {
                             !authContext.auth._token?<li className="item">
-                                <Link to="login" key="login">Log in</Link> or <Link to="register" key="register">Register</Link>
+                                <Link to={location => ({ ...location, pathname: "/login" })} key="login">Log in</Link> or <Link  to={location => ({ ...location, pathname: "/register" })} key="register">Register</Link>
                                                     </li>:""
                         }
                         {
-                            isAdmin?<li className="item"><Link to="admin/dashboard" key="dashboard">Dashboard</Link></li>:""
+                            isAdmin?<li className="item"><Link  to={location => ({ ...location, pathname: "/admin/dashboard" })} key="dashboard">Dashboard</Link></li>:""
                         }
                         <li className="item"><a href="/">Daily Offers</a></li>
                         <li className="item"><a href="/">Buy what you need</a></li>
@@ -332,7 +333,7 @@ export function MainPage() {
                     </ul>
                 </div>
             </div>
-            <div className="container">
+            <div className="container-fluid">
                 <div className="main-nav">
                     <div className="main-nav-container">
                         <span className="sidebar-icon" onClick={handleSidebarStatus}>
@@ -350,7 +351,7 @@ export function MainPage() {
                             <div className="content">
                                 Hi{!authContext.auth._token?
                                 (<div className="login-signup">
-                                    ! <Link to="login" key="login">Log in</Link> or <Link to="register" key="register">Register</Link>
+                                    ! <Link to={location => ({ ...location, pathname: "/login" })} key="login">Log in</Link> or <Link  to={location => ({ ...location, pathname: "/register" })} key="register">Register</Link>
                                 </div>):
                                 (<div className="portfolio-data">
                                     <span className="name" onClick={handlePortfolioDropBoxStatus}>{". " + userRef.current.name}</span>
@@ -360,7 +361,7 @@ export function MainPage() {
                                             <div className="name">{ userRef.current.name }</div>
                                         </div>
                                         <div className="body">
-                                            <Link className="link" to="logout" key="logout">logout</Link>
+                                            <Link className="link" to={location => ({ ...location, pathname: "logout"})} key="logout">logout</Link>
                                         </div>
                                     </div>
                                 </div>)
@@ -378,19 +379,25 @@ export function MainPage() {
                             {
                                 topCategoriesRef.current !== []?
                                     topCategories.map((category, index) => (
-                                        <li className="item" key={index}>{category.name}</li>
+                                        <li className="item" key={index}>
+                                            <Link to={location => ({ ...location, pathname: `/category`, search: `?category_id=${category.id}`})}>
+                                                {category.name}
+                                            </Link>
+                                        </li>
                                     )):"There is some problem"
                             }
                         </ul>
                 </div>
                 <div className="content">
 
-                    <Switch>
-                        <Route path={`${path}`} exact
+                        <Route path={'/'} exact
                                render={() => (
                                    <HomePage />
                                )} />
-                    </Switch>
+                        <Route path={`/category`}
+                               render={() => (
+                                   <CategoryPage />
+                               )} />
                 </div>
             </div>
         </div>);

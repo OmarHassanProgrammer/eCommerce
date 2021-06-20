@@ -2,7 +2,7 @@
 
 html,
 body {
-  height: 100%;
+  min-height: 100vh;
 }
 
 * {
@@ -10926,7 +10926,7 @@ a.text-dark:focus {
 
 .main-page {
   background-color: #e7e7e7;
-  min-height: 100%;
+  min-height: 100vh;
 }
 
 .main-page .sidebar {
@@ -11454,15 +11454,18 @@ a.text-dark:focus {
   justify-content: space-between;
 }
 
-.main-page .lower-nav .items .item {
+.main-page .lower-nav .items .item,
+.main-page .lower-nav .items .item a {
   display: inline-block;
   color: #555;
   cursor: pointer;
   transition: color 0.5s ease-in-out;
 }
 
-.main-page .lower-nav .items .item:hover {
+.main-page .lower-nav .items .item:hover,
+.main-page .lower-nav .items .item a:hover {
   color: #000;
+  text-decoration: none;
 }
 
 .main-page .content .home-page .carousel {
@@ -11562,6 +11565,35 @@ a.text-dark:focus {
   position: absolute;
   bottom: 0;
   left: 0;
+}
+
+.main-page .content .category-page .side-bar {
+  width: 15%;
+  position: relative;
+  height: 100%;
+}
+
+.main-page .content .category-page .side-bar .block .title {
+  margin-bottom: 0;
+}
+
+.main-page .content .category-page .side-bar .block a {
+  color: #333;
+}
+
+.main-page .content .category-page .side-bar .block a:hover {
+  color: #2980b9;
+  text-decoration: none;
+}
+
+.main-page .content .category-page .side-bar:after {
+  content: "";
+  width: 1px;
+  height: 80%;
+  position: absolute;
+  top: 10%;
+  right: 0;
+  background-color: #777;
 }
 
 .login-page {

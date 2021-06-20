@@ -45,6 +45,18 @@ class CategoryController extends Controller
         return $categories;
     }
 
+    public function getSubCategories($id) {
+        try {
+            $sub_categories = Category::where('parent_group', $id)->get();
+            for($i = 0; $i < count(collect($sub_categories)->toArray()); $i++) {
+                $sub_categories[$i]['sub_categories'] = $this->getSubCategories($sub_categories[$i]->id);
+            }
+            return $sub_categories;
+        } catch (\Exception $error) {
+            return $error;
+        }
+    }
+
     public function getCategory($id) {
         $category = Category::find($id);
 

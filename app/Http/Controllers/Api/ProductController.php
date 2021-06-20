@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\Product;
 use App\Traits\GeneralTrait;
 use Illuminate\Http\Request;
@@ -44,6 +45,18 @@ class ProductController extends Controller
                 }
             }
         }
+    }
+
+    public function getCategoryProducts($id) {
+        $products = [];
+        array_push($products, collect(Product::where('category', $id))->toArray());
+
+        $subCategories = Category::where('parent_group', $id);
+        for($i = 1; $i <= collect($subCategories)->toArray(); $i++) {
+            array_push($products, $this->getCategoryProducts(collect($subCategories)->toArray()[$i]->id));
+        }
+
+        return $products;
     }
 
     public function getProduct($id) {

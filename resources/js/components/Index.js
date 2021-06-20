@@ -24,11 +24,11 @@ function Index() {
         <BrowserRouter>
             <div className="App">
                 <Switch>
-                    <Route path="/" exact component={MainPage} />
                     <Route path="/login" exact component={LoginPage} />
                     <Route path="/register" exact component={RegisterPage} />
                     <Route path="/logout" exact component={LogoutPage} />
                     <Route path="/admin/dashboard/" component={Dashboard} />
+                    <Route path="/" component={MainPage} />
                 </Switch>
             </div>
         </BrowserRouter>

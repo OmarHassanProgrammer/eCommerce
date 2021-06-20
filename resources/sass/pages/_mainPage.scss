@@ -1,6 +1,6 @@
 .main-page {
     background-color: #e7e7e7;
-    min-height: 100%;
+    min-height: 100vh;
     .sidebar {
         width: 100vw;
         height: 100vh;
@@ -479,18 +479,20 @@
             padding: 0;
             display: flex;
             justify-content: space-between;
-            .item {
+            .item, .item a {
                 display: inline-block;
                 color: #555;
                 cursor: pointer;
                 transition: color .5s ease-in-out;
                 &:hover {
-                    color: #000
+                    color: #000;
+                    text-decoration: none;
                 }
             }
         }
     }
     .content {
         @import "_mainPagePages/homePage";
+        @import "_mainPagePages/categoryPage";
     }
 }
