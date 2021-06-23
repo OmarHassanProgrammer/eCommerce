@@ -46,7 +46,9 @@ export default function ProductsPage(props) {
                     products !== []?
                         products.map((product, index) => (
                             <div className="product" key={index}>
-                                <div className="image"></div>
+                                <img className="image" src={ product.logo }>
+
+                                </img>
                                 <div className="middle">
                                     <div className="name">
                                         { product.name }

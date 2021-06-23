@@ -27,7 +27,7 @@ class CategoryController extends Controller
             }
         } else {
             if($request->pagination == 0) {
-                return Category::where('parent_group', $request->parentGroup)->orderBy('created_at', 'desc');
+                return Category::where('parent_group', $request->parentGroup)->orderBy('created_at', 'desc')->get();
             } else {
                 return Category::where('parent_group', $request->parentGroup)->orderBy('created_at', 'desc')->paginate($request->pagination);
             }

@@ -5,12 +5,15 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\User;
 use App\Traits\GeneralTrait;
 use Illuminate\Http\Request;
+use function MongoDB\BSON\toJSON;
 
 class ProductController extends Controller
 {
     use GeneralTrait;
+    public $i = 0;
 
     public function __construct() {
     }
@@ -47,16 +50,47 @@ class ProductController extends Controller
         }
     }
 
-    public function getCategoryProducts($id) {
+    public function getCategoryProducts($id, $pagination) {
+        $paginate = $pagination;
         $products = [];
-        array_push($products, collect(Product::where('category', $id))->toArray());
-
-        $subCategories = Category::where('parent_group', $id);
-        for($i = 1; $i <= collect($subCategories)->toArray(); $i++) {
-            array_push($products, $this->getCategoryProducts(collect($subCategories)->toArray()[$i]->id));
+        $category_products = collect(Product::where('category', $id)->paginate($paginate))->toArray()['data'];
+        for($i = 0; $i < count($category_products); $i++) {
+            $category_products[$i]['trader_name'] = User::find($category_products[$i]['trader'])->name;
         }
 
-        return $products;
+        if(count($category_products) !== 0) {
+            array_push($products, ...$category_products);
+        }
+
+        $paginate = $pagination - count($category_products);
+
+        if($paginate === 0) {
+            return [$products, $paginate];
+        }
+
+        $subCategories = collect(Category::where('parent_group', $id)->get())->toArray();
+
+        for($i = 0; $i < count($subCategories); $i++) {
+            $category_id = $subCategories[$i]['id'];
+            $response = $this->getCategoryProducts($category_id, $paginate);
+            $subgroup_products = $response[0];
+            $paginate = $response[1];
+
+            $myfile = fopen("newfile.text", "a") or die("Unable to open file!");
+            fwrite($myfile, $subCategories[$i]['name'] . ":");
+            $products_text = json_encode($subgroup_products);
+            fwrite($myfile, $products_text);
+            fclose($myfile);
+
+            if($subgroup_products !== []) {
+                array_push($products, ...$subgroup_products);
+            }
+            if($paginate === 0) {
+                return [$products, $paginate];
+            }
+        }
+
+        return [$products, $paginate];
     }
 
     public function getProduct($id) {

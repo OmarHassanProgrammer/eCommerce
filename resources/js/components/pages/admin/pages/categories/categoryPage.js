@@ -49,7 +49,6 @@ export default function CategoryPage(props) {
                 baseURL: baseUrl,
                 params: {
                     'api_password': localStorage.getItem('api_password'),
-                    'token': _token,
                     'parentGroup': categoryID,
                     'pagination': 0
                 },
@@ -57,7 +56,7 @@ export default function CategoryPage(props) {
             })
                 .then(response => {
                     console.log(response.data);
-                    setCategories(response.data.data);
+                    setCategories(response.data);
                 })
                 .catch(error => {
                     console.log(error.response);
@@ -120,12 +119,12 @@ export default function CategoryPage(props) {
                         <Link to='/admin/dashboard/categories' onClick={props.handleRerenderEffect} >Categories</Link>
                     </li>
                     {
-                        parentsFamilyElementRef.current.map(element => {
+                        parentsFamilyElementRef.current !== []?parentsFamilyElementRef.current.map(element => {
                             return  (
                                 <li className="breadcrumb-item" key={element.id}>
                                     <Link to={'/admin/dashboard/category/' + element.id} onClick={props.handleRerenderEffect} >{ element.name }</Link>
                                 </li>)
-                        })
+                        }):""
                     }
                     <li className="breadcrumb-item active" aria-current="page">{ category.name }</li>
                 </ol>

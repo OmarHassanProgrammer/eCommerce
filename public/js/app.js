@@ -91525,7 +91525,15 @@ function MainPage() {
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
       className: "item",
       key: index
-    }, category.name);
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_3__["Link"], {
+      to: function to(location) {
+        return _objectSpread(_objectSpread({}, location), {}, {
+          pathname: "/category",
+          search: "?category_id=".concat(category.id)
+        });
+      },
+      onClick: handleSidebarStatus
+    }, category.name));
   }) : "There is some problem")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
     className: "part"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
@@ -92515,7 +92523,7 @@ function CategoriesPage(props) {
                   baseURL: baseUrl,
                   params: {
                     'api_password': localStorage.getItem('api_password'),
-                    'parentGroup': "ALL",
+                    'parentGroup': "0",
                     'pagination': 0
                   },
                   method: "GET"
@@ -92713,14 +92721,13 @@ function CategoryPage(props) {
                   baseURL: baseUrl,
                   params: {
                     'api_password': localStorage.getItem('api_password'),
-                    'token': _token,
                     'parentGroup': categoryID,
                     'pagination': 0
                   },
                   method: "GET"
                 }).then(function (response) {
                   console.log(response.data);
-                  setCategories(response.data.data);
+                  setCategories(response.data);
                 })["catch"](function (error) {
                   console.log(error.response);
                 });
@@ -92842,7 +92849,7 @@ function CategoryPage(props) {
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_2__["Link"], {
     to: "/admin/dashboard/categories",
     onClick: props.handleRerenderEffect
-  }, "Categories")), parentsFamilyElementRef.current.map(function (element) {
+  }, "Categories")), parentsFamilyElementRef.current !== [] ? parentsFamilyElementRef.current.map(function (element) {
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
       className: "breadcrumb-item",
       key: element.id
@@ -92850,7 +92857,7 @@ function CategoryPage(props) {
       to: '/admin/dashboard/category/' + element.id,
       onClick: props.handleRerenderEffect
     }, element.name));
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
+  }) : "", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
     className: "breadcrumb-item active",
     "aria-current": "page"
   }, category.name))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
@@ -93180,8 +93187,9 @@ function ProductsPage(props) {
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
       className: "product",
       key: index
-    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
-      className: "image"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("img", {
+      className: "image",
+      src: product.logo
     }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
       className: "middle"
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
@@ -94703,6 +94711,14 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
@@ -94740,14 +94756,27 @@ function CategoryPage() {
   var categoryId = getQueryParam('category_id', 0);
 
   var _useState3 = react_usestateref__WEBPACK_IMPORTED_MODULE_6___default()([]),
-      _useState4 = _slicedToArray(_useState3, 2),
-      subCategories = _useState4[0],
-      setSubCategories = _useState4[1];
+      _useState4 = _slicedToArray(_useState3, 3),
+      category = _useState4[0],
+      setCategory = _useState4[1],
+      categoryRef = _useState4[2];
 
   var _useState5 = react_usestateref__WEBPACK_IMPORTED_MODULE_6___default()([]),
       _useState6 = _slicedToArray(_useState5, 2),
-      products = _useState6[0],
-      setProducts = _useState6[1];
+      subCategories = _useState6[0],
+      setSubCategories = _useState6[1];
+
+  var _useState7 = react_usestateref__WEBPACK_IMPORTED_MODULE_6___default()([]),
+      _useState8 = _slicedToArray(_useState7, 3),
+      products = _useState8[0],
+      setProducts = _useState8[1],
+      productsRef = _useState8[2];
+
+  var _useState9 = react_usestateref__WEBPACK_IMPORTED_MODULE_6___default()([]),
+      _useState10 = _slicedToArray(_useState9, 3),
+      parentsFamilyElement = _useState10[0],
+      setParentsFamilyElement = _useState10[1],
+      parentsFamilyElementRef = _useState10[2];
 
   var location = Object(react_router_dom__WEBPACK_IMPORTED_MODULE_5__["useLocation"])();
   Object(react__WEBPACK_IMPORTED_MODULE_1__["useEffect"])(function () {
@@ -94757,12 +94786,12 @@ function CategoryPage() {
       }
     });
 
-    function getSubCategories() {
-      return _getSubCategories.apply(this, arguments);
+    function getCategory() {
+      return _getCategory.apply(this, arguments);
     }
 
-    function _getSubCategories() {
-      _getSubCategories = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+    function _getCategory() {
+      _getCategory = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
         var baseUrl;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
           while (1) {
@@ -94770,6 +94799,43 @@ function CategoryPage() {
               case 0:
                 baseUrl = localStorage.getItem('host') + localStorage.getItem('api_extension');
                 _context.next = 3;
+                return axios__WEBPACK_IMPORTED_MODULE_9___default.a.request({
+                  url: "category/get/".concat(categoryId),
+                  baseURL: baseUrl,
+                  params: {
+                    'api_password': localStorage.getItem('api_password')
+                  },
+                  method: "GET"
+                }).then(function (response) {
+                  setCategory(response.data.category);
+                  categoryFamilyTreeFunc(response.data.category.parent_group);
+                });
+
+              case 3:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee);
+      }));
+      return _getCategory.apply(this, arguments);
+    }
+
+    getCategory();
+
+    function getSubCategories() {
+      return _getSubCategories.apply(this, arguments);
+    }
+
+    function _getSubCategories() {
+      _getSubCategories = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
+        var baseUrl;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                baseUrl = localStorage.getItem('host') + localStorage.getItem('api_extension');
+                _context2.next = 3;
                 return axios__WEBPACK_IMPORTED_MODULE_9___default.a.request({
                   url: "category/getSubCategories/".concat(categoryId),
                   baseURL: baseUrl,
@@ -94784,10 +94850,10 @@ function CategoryPage() {
 
               case 3:
               case "end":
-                return _context.stop();
+                return _context2.stop();
             }
           }
-        }, _callee);
+        }, _callee2);
       }));
       return _getSubCategories.apply(this, arguments);
     }
@@ -94799,37 +94865,117 @@ function CategoryPage() {
     }
 
     function _getProducts() {
-      _getProducts = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
+      _getProducts = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee3() {
         var baseUrl;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee3$(_context3) {
           while (1) {
-            switch (_context2.prev = _context2.next) {
+            switch (_context3.prev = _context3.next) {
               case 0:
                 baseUrl = localStorage.getItem('host') + localStorage.getItem('api_extension');
-                _context2.next = 3;
+                _context3.next = 3;
                 return axios__WEBPACK_IMPORTED_MODULE_9___default.a.request({
-                  url: "product/getCategoryProducts/".concat(categoryId),
+                  url: "product/getCategoryProducts/".concat(categoryId, "/17"),
                   baseURL: baseUrl,
                   params: {
                     'api_password': localStorage.getItem('api_password')
                   },
                   method: "GET"
                 }).then(function (response) {
-                  console.log(response);
-                  setProducts(response.data);
+                  console.log("produuuuuu", response);
+                  setProducts(response.data[0]);
                 });
 
               case 3:
               case "end":
-                return _context2.stop();
+                return _context3.stop();
             }
           }
-        }, _callee2);
+        }, _callee3);
       }));
       return _getProducts.apply(this, arguments);
     }
 
     getProducts();
+
+    function categoryFamilyTreeFunc(_x) {
+      return _categoryFamilyTreeFunc2.apply(this, arguments);
+    }
+
+    function _categoryFamilyTreeFunc2() {
+      _categoryFamilyTreeFunc2 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee5(parent_id) {
+        var parentID, baseUrl, _token, _categoryFamilyTreeFunc, _categoryFamilyTreeFunc3;
+
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee5$(_context5) {
+          while (1) {
+            switch (_context5.prev = _context5.next) {
+              case 0:
+                _categoryFamilyTreeFunc3 = function _categoryFamilyTreeFu2() {
+                  _categoryFamilyTreeFunc3 = _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4() {
+                    return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee4$(_context4) {
+                      while (1) {
+                        switch (_context4.prev = _context4.next) {
+                          case 0:
+                            console.log(parentID);
+
+                            if (!(parentID !== 0)) {
+                              _context4.next = 6;
+                              break;
+                            }
+
+                            _context4.next = 4;
+                            return axios__WEBPACK_IMPORTED_MODULE_9___default.a.request({
+                              url: "category/get/" + parentID,
+                              baseURL: baseUrl,
+                              params: {
+                                'api_password': localStorage.getItem('api_password')
+                              },
+                              method: "GET"
+                            }).then(function (response) {
+                              console.log(response);
+                              setParentsFamilyElement([response.data.category].concat(_toConsumableArray(parentsFamilyElementRef.current)));
+                              parentID = response.data.category.parent_group;
+                              setTimeout(_categoryFamilyTreeFunc, 100);
+                            })["catch"](function (error) {
+                              console.log(error.response);
+                            });
+
+                          case 4:
+                            _context4.next = 7;
+                            break;
+
+                          case 6:
+                            console.log("tree", parentsFamilyElementRef.current);
+
+                          case 7:
+                          case "end":
+                            return _context4.stop();
+                        }
+                      }
+                    }, _callee4);
+                  }));
+                  return _categoryFamilyTreeFunc3.apply(this, arguments);
+                };
+
+                _categoryFamilyTreeFunc = function _categoryFamilyTreeFu() {
+                  return _categoryFamilyTreeFunc3.apply(this, arguments);
+                };
+
+                parentID = parent_id;
+                baseUrl = localStorage.getItem('host') + localStorage.getItem('api_extension');
+                _token = localStorage.getItem('_token');
+                setParentsFamilyElement([]);
+
+                _categoryFamilyTreeFunc();
+
+              case 7:
+              case "end":
+                return _context5.stop();
+            }
+          }
+        }, _callee5);
+      }));
+      return _categoryFamilyTreeFunc2.apply(this, arguments);
+    }
   }, [location.search]);
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
     className: "category-page"
@@ -94841,10 +94987,10 @@ function CategoryPage() {
     className: "title"
   }, "Categories:"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("ul", {
     className: "items"
-  }, subCategories.map(function (category, index) {
+  }, parentsFamilyElementRef.current.map(function (category) {
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
-      className: "item",
-      key: index
+      className: "item prev-item",
+      key: category.id
     }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_5__["Link"], {
       to: function to(location) {
         return _objectSpread(_objectSpread({}, location), {}, {
@@ -94853,7 +94999,31 @@ function CategoryPage() {
         });
       }
     }, category.name));
-  }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
+    className: "item active",
+    key: category.id
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_5__["Link"], {
+    to: function to(location) {
+      return _objectSpread(_objectSpread({}, location), {}, {
+        pathname: "/category",
+        search: "?category_id=".concat(category.id)
+      });
+    }
+  }, category.name)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
+    className: "item"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("ul", null, subCategories.map(function (category, index) {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
+      className: "item",
+      key: category.id
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_5__["Link"], {
+      to: function to(location) {
+        return _objectSpread(_objectSpread({}, location), {}, {
+          pathname: "/category",
+          search: "?category_id=".concat(category.id)
+        });
+      }
+    }, category.name));
+  }))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
     className: "block"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("h6", {
     className: "title"
@@ -94883,7 +95053,50 @@ function CategoryPage() {
     className: "item"
   }, "Between 100$ and 300$"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("li", {
     className: "item"
-  }, "Less Than 100$")))));
+  }, "Less Than 100$")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+    className: "content"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+    className: "products"
+  }, products !== [] ? productsRef.current.map(function (product, index) {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+      className: "product",
+      key: index
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+      className: "image"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("img", {
+      src: product.logo
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+      className: "middle"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+      className: "name"
+    }, product.name), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("span", {
+      className: "trader"
+    }, "by ", product.trader_name)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+      className: "bottom"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+      className: "rate"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+      className: "stars"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("span", {
+      className: "star fill"
+    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("span", {
+      className: "star fill"
+    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("span", {
+      className: "star fill"
+    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("span", {
+      className: "star 1-fill"
+    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("span", {
+      className: "star "
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("span", {
+      className: "rates"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_router_dom__WEBPACK_IMPORTED_MODULE_5__["Link"], {
+      to: ""
+    }, "125524")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("div", {
+      className: "price"
+    }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement("span", {
+      className: "dollar-sign"
+    }, "$"), product.price));
+  }) : "")));
 }
 
 /***/ }),

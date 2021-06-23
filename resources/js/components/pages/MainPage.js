@@ -286,7 +286,11 @@ export function MainPage() {
                                 {
                                     topCategoriesRef.current !== []?
                                         topCategories.map((category, index) => (
-                                            <li className="item" key={index}>{category.name}</li>
+                                            <li className="item" key={index}>
+                                                <Link to={location => ({ ...location, pathname: `/category`, search: `?category_id=${category.id}`})} onClick={handleSidebarStatus}>
+                                                    {category.name}
+                                                </Link>
+                                            </li>
                                         )):"There is some problem"
                                 }
                             </ul>

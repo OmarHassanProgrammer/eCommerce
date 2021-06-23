@@ -27,7 +27,7 @@ export default function CategoriesPage(props) {
                 baseURL: baseUrl,
                 params: {
                     'api_password': localStorage.getItem('api_password'),
-                    'parentGroup': "ALL",
+                    'parentGroup': "0",
                     'pagination': 0
                 },
                 method: "GET"

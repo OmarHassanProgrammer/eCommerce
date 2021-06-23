@@ -12,8 +12,10 @@ export default function CategoryPage() {
     const authContext = useContext(AuthContext);
     const [user, setUser, userRef] = useState({});
     const categoryId = getQueryParam('category_id', 0);
+    const [category, setCategory, categoryRef] = useState([]);
     const [subCategories, setSubCategories] = useState([]);
-    const [products, setProducts] = useState([]);
+    const [products, setProducts, productsRef] = useState([]);
+    const [parentsFamilyElement, setParentsFamilyElement, parentsFamilyElementRef] = useState([]);
     let location = useLocation();
 
     useEffect(() => {
@@ -22,6 +24,22 @@ export default function CategoryPage() {
                 setUser(r);
             }
         });
+        async function getCategory() {
+            const baseUrl = localStorage.getItem('host') + localStorage.getItem('api_extension');
+            await axios.request({
+                url: `category/get/${categoryId}`,
+                baseURL: baseUrl,
+                params: {
+                    'api_password': localStorage.getItem('api_password')
+                },
+                method: "GET"
+            })
+                .then(response => {
+                    setCategory(response.data.category);
+                    categoryFamilyTreeFunc(response.data.category.parent_group);
+                });
+        }
+        getCategory();
 
         async function getSubCategories() {
             const baseUrl = localStorage.getItem('host') + localStorage.getItem('api_extension');
@@ -43,7 +61,7 @@ export default function CategoryPage() {
         async function getProducts() {
             const baseUrl = localStorage.getItem('host') + localStorage.getItem('api_extension');
             await axios.request({
-                url: `product/getCategoryProducts/${categoryId}`,
+                url: `product/getCategoryProducts/${categoryId}/17`,
                 baseURL: baseUrl,
                 params: {
                     'api_password': localStorage.getItem('api_password')
@@ -51,11 +69,47 @@ export default function CategoryPage() {
                 method: "GET"
             })
                 .then(response => {
-                    console.log(response);
-                    setProducts(response.data);
+                    console.log("produuuuuu", response);
+                    setProducts(response.data[0]);
                 });
         }
         getProducts();
+
+        async function categoryFamilyTreeFunc(parent_id) {
+            let parentID = parent_id;
+            const baseUrl = localStorage.getItem('host') + localStorage.getItem('api_extension');
+            const _token = localStorage.getItem('_token');
+            setParentsFamilyElement([]);
+
+            async function _categoryFamilyTreeFunc() {
+                console.log(parentID);
+                if(parentID !== 0) {
+                    await axios.request({
+                        url: "category/get/" + parentID,
+                        baseURL: baseUrl,
+                        params: {
+                            'api_password': localStorage.getItem('api_password')
+                        },
+                        method: "GET"
+                    })
+                        .then(response => {
+                            console.log(response);
+                            setParentsFamilyElement([
+                                response.data.category,
+                                ...parentsFamilyElementRef.current
+                            ]);
+                            parentID = response.data.category.parent_group;
+                            setTimeout(_categoryFamilyTreeFunc, 100);
+                        })
+                        .catch(error => {
+                            console.log(error.response);
+                        });
+                } else {
+                    console.log("tree", parentsFamilyElementRef.current);
+                }
+            }
+            _categoryFamilyTreeFunc();
+        }
 
     }, [location.search]);
 
@@ -66,14 +120,31 @@ export default function CategoryPage() {
                     <h6 className="title">Categories:</h6>
                     <ul className="items">
                         {
-                            subCategories.map((category, index) => {
-                                return <li className="item" key={index}>
-                                    <Link to={location => ({ ...location, pathname: `/category`, search: `?category_id=${category.id}`})}>
-                                        {category.name}
-                                    </Link>
-                                </li>
+                            parentsFamilyElementRef.current.map(category => {
+                                return  (
+                                    <li className="item prev-item" key={category.id}>
+                                        <Link to={location => ({ ...location, pathname: `/category`, search: `?category_id=${category.id}`})} >{ category.name }</Link>
+                                    </li>)
                             })
                         }
+                        {
+                            <li className="item active" key={category.id}>
+                                <Link to={location => ({ ...location, pathname: `/category`, search: `?category_id=${category.id}`})} >{ category.name }</Link>
+                            </li>
+                        }
+                            <li className="item">
+                                <ul>
+                                    {
+                                        subCategories.map((category, index) => {
+                                            return <li className="item" key={category.id}>
+                                                <Link to={location => ({ ...location, pathname: `/category`, search: `?category_id=${category.id}`})}>
+                                                    {category.name}
+                                                </Link>
+                                            </li>
+                                        })
+                                    }
+                                </ul>
+                            </li>
                     </ul>
                 </div>
                 <div className="block">
@@ -112,6 +183,55 @@ export default function CategoryPage() {
                             Less Than 100$
                         </li>
                     </ul>
+                </div>
+            </div>
+            <div className="content">
+                <div className="products">
+                    {
+                        products !== []?
+                            productsRef.current.map((product, index) => (
+                                <div className="product" key={index}>
+                                    <div className="image">
+                                        <img src={ product.logo } />
+                                    </div>
+
+                                    <div className="middle">
+                                        <div className="name">
+                                            { product.name }
+                                        </div>
+                                        <span className="trader">
+                                        by { product.trader_name }
+                                        </span>
+                                    </div>
+                                    <div className="bottom">
+
+                                        <div className="rate">
+                                            <div className="stars">
+                                                <span className="star fill">
+                                                </span>
+                                                <span className="star fill">
+                                                </span>
+                                                <span className="star fill">
+                                                </span>
+                                                <span className="star 1-fill">
+                                                </span>
+                                                <span className="star ">
+                                                </span>
+                                            </div>
+                                            <span className="rates">
+                                                <Link to="" >
+                                                    125524
+                                                </Link>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div className="price">
+                                        <span className="dollar-sign">$</span>{product.price}
+                                    </div>
+
+                                </div>
+                            )):""
+                    }
                 </div>
             </div>
         </div>

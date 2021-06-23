@@ -10,7 +10,7 @@ class Product extends Model
     use Notifiable;
 
     protected $fillable = [
-        'name', 'trader', 'category', 'price', 'quantity', 'description', 'created_at', 'updated_at'
+        'name', 'trader', 'category', 'price', 'quantity', 'description', 'logo', 'created_at', 'updated_at'
     ];
     protected $hidden = [
         'created_at', 'updated_at'

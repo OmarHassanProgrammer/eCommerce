@@ -1,6 +1,7 @@
 .products-page {
     .products {
         width: 100%;
+        display: flex;
         .product {
             width: 24%;
             display: inline-block;
@@ -10,12 +11,8 @@
             border-radius: 10px;
             text-align: center;
             .image {
-                width: 110px;
-                height: 110px;
-                background-color: #eee;
-                border-radius: 50%;
+                height: 150px;
                 margin: auto;
-                border: #eee 1px solid;
                 padding: 10px;
             }
             .middle {
