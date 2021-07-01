@@ -13,3 +13,50 @@ ul {
 .App {
     min-height: 100vh;
 }
+
+.stars {
+    display: inline-block;
+    margin-right: 5px;
+    position: relative;
+    top: 5px;
+    cursor: pointer;
+    .star {
+        position: relative;
+        -webkit-clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+        clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+        width: 24px;
+        height: 24px;
+        display: inline-block;
+        background-color: #e17c22;
+        &:before{
+            content: "";
+            -webkit-clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            width: 16px;
+            height: 16px;
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            display: inline-block;
+            background-color: #ffa41c;
+        }
+        &.half-fill {
+            &:after {
+                content: "";
+                clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%);
+                width: 16px;
+                height: 16px;
+                position: absolute;
+                top: 4px;
+                left: 4px;
+                display: inline-block;
+                background-color: #fff;
+            }
+        }
+        &:not(.fill):not(.half-fill) {
+            &:before {
+                background-color: #fff;
+            }
+        }
+    }
+}

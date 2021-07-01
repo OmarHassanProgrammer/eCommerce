@@ -87,6 +87,16 @@ window.getQueryParam = (paramName, defaultVal = 'Default') => {
     return paramVal;
 }
 
+window.isEmpty = (obj) => {
+    for(var prop in obj) {
+        if(obj.hasOwnProperty(prop)) {
+            return false;
+        }
+    }
+
+    return JSON.stringify(obj) === JSON.stringify({});
+}
+
 
 
 

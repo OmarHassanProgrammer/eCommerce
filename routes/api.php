@@ -43,7 +43,8 @@ Route::group(['prefix' => 'category'], function() {
 Route::group(['prefix' => 'product'], function() {
     Route::get('getAll', 'ProductController@getProducts');
     Route::get('get/{id}', 'ProductController@getProduct');
-    Route::get('getCategoryProducts/{id}/{pagination}', 'ProductController@getCategoryProducts');
+    Route::get('getCategoryProducts/{id}', 'ProductController@getCategoryProducts');
+    Route::get('getCategoryProducts/{id}/{first_loop}', 'ProductController@getCategoryProducts');
     Route::post('add', 'ProductController@addProduct');
     Route::post('edit', 'ProductController@update');
     Route::get('delete', 'ProductController@delete');

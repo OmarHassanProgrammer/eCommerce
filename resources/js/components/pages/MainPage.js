@@ -343,7 +343,7 @@ export function MainPage() {
                         <span className="sidebar-icon" onClick={handleSidebarStatus}>
                             <i className="fa fa-bars"></i>
                         </span>
-                        <img src="./../images/logo.png" className="website-logo"/>
+                        <Link to={location => ({ ...location, pathname: `/`, search: `?`})}><img src="./../images/logo.png" className="website-logo"/></Link>
                         <div className="search">
                             <Formik
                                 initialValues={{search_text: "", category: ""}}

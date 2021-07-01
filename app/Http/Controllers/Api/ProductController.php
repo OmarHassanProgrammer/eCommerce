@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Rate;
 use App\Models\User;
 use App\Traits\GeneralTrait;
 use Illuminate\Http\Request;
@@ -50,10 +52,12 @@ class ProductController extends Controller
         }
     }
 
-    public function getCategoryProducts($id, $pagination) {
-        $paginate = $pagination;
+    public function getCategoryProducts(Request $request, $id, $first_loop = true) {
         $products = [];
-        $category_products = collect(Product::where('category', $id)->paginate($paginate))->toArray()['data'];
+        $brands = [];
+        $category_products_collection = Product::where('category', $id)->get();
+
+        $category_products = collect($category_products_collection)->toArray();
         for($i = 0; $i < count($category_products); $i++) {
             $category_products[$i]['trader_name'] = User::find($category_products[$i]['trader'])->name;
         }
@@ -62,41 +66,98 @@ class ProductController extends Controller
             array_push($products, ...$category_products);
         }
 
-        $paginate = $pagination - count($category_products);
-
-        if($paginate === 0) {
-            return [$products, $paginate];
-        }
-
         $subCategories = collect(Category::where('parent_group', $id)->get())->toArray();
 
         for($i = 0; $i < count($subCategories); $i++) {
             $category_id = $subCategories[$i]['id'];
-            $response = $this->getCategoryProducts($category_id, $paginate);
-            $subgroup_products = $response[0];
-            $paginate = $response[1];
-
-            $myfile = fopen("newfile.text", "a") or die("Unable to open file!");
-            fwrite($myfile, $subCategories[$i]['name'] . ":");
-            $products_text = json_encode($subgroup_products);
-            fwrite($myfile, $products_text);
-            fclose($myfile);
-
+            $subgroup_products = $this->getCategoryProducts(new Request(), $category_id, false);
             if($subgroup_products !== []) {
                 array_push($products, ...$subgroup_products);
             }
-            if($paginate === 0) {
-                return [$products, $paginate];
-            }
         }
 
-        return [$products, $paginate];
+        if($first_loop) {
+            $return_brands = [];
+            $min_price = 100000;
+            $max_price = 0;
+            foreach ($products as $key=>$product) {
+                $deleted = false;
+
+                $products[$key]['rate'] = $this->getProductRate($product['id']);
+                $products[$key]['rates'] = count(collect(Product::find($product['id'])->rates)->toArray());
+                if(!in_array([
+                    'id' => $product['brand_id'],
+                    'name' => Brand::find($product['brand_id'])['name']
+                ], $return_brands)) {
+                    array_push($return_brands, [
+                        'id' => $product['brand_id'],
+                        'name' => Brand::find($product['brand_id'])['name']
+                    ]);
+                }
+                if($request->checked_brands !== 'ALL') {
+                    if(!in_array($product['brand_id'], explode(',', $request->checked_brands))) {
+                        unset($products[$key]);
+                        $deleted = true;
+                    }
+                }
+                if(!$deleted) {
+                    if ($product['price'] < $min_price)
+                        $min_price = $product['price'];
+                    if ($product['price'] > $max_price)
+                        $max_price = $product['price'];
+                    if ($request->price !== 'ALL') {
+                        if (!((number_format(explode(':', $request->price)[0]) <= $product['price']) && ($product['price'] <= number_format(explode(':', $request->price)[1])))) {
+                            unset($products[$key]);
+                            $deleted = true;
+                        }
+                    }
+                }
+                if(!$deleted) {
+                    if ($request->price !== 'ALL') {
+                        if (!((number_format(explode(':', $request->price)[0]) <= $product['price']) && ($product['price'] <= number_format(explode(':', $request->price)[1])))) {
+                            unset($products[$key]);
+                            $deleted = true;
+                        }
+                    }
+                }
+                if(!$deleted) {
+                    if($request->rate !== 'ALL') {
+                        if ($products[$key]['rate'] < $request->rate) {
+                            unset($products[$key]);
+                            $deleted = true;
+                        }
+                    }
+                }
+            }
+            return response()->json([
+                'products' => $this->paginate($products, $request->pagination),
+                'brands' => $return_brands,
+                'min_price' => $min_price,
+                'max_price' => $max_price
+            ]);
+        }
+        return $products;
     }
 
     public function getProduct($id) {
         $product = Product::find($id);
 
         return $this->returnData('product', $product);
+    }
+
+    public function getProductRate($id) {
+        $rates = collect(Product::find($id)->rates)->toArray();
+        $sum_rate = 0;
+
+        if(count($rates) === 0) {
+            return 0;
+        } else {
+            for($i = 0; $i < count($rates); $i++) {
+                $sum_rate += $rates[$i]['rate'];
+            }
+
+            return $sum_rate / count($rates);
+        }
     }
 
     public function addCategory(Request $request) {
@@ -109,7 +170,7 @@ class ProductController extends Controller
             $product->quantity = $request->quantity;
             $product->save();
 
-            return $this->returnData('product', product);
+            return $this->returnData('product', $product);
         } catch (\Exception $error) {
             return $error;
             return $this->returnError('E001', 'there is some error');
