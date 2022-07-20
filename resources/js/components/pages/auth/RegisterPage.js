@@ -11,17 +11,14 @@ export function RegisterPage() {
     const authContext = useContext(AuthContext);
     const alert = useAlert();
     let history = useHistory();
-    const [signedup, setSignedup] = useState(false);
 
 
     useEffect(() => {
-        if(!signedup) {
-            if (Object.keys(authContext.auth).length !== 0) {
-                alert.error(__("generalError", "messages"));
-                history.push('/');
-            }
+        if(authContext.authRef.current.status) {
+            alert.error(__("generalError", "messages"));
+            history.push('/');
         }
-    }, [Object.keys(authContext.auth).length]);
+    }, [authContext.authRef.current.status]);
 
     let form = (props) => {
         return (<form onSubmit={props.handleSubmit}>
@@ -74,15 +71,22 @@ export function RegisterPage() {
     function validateResponse(response) {
         if(response.status == 200) {
             if(response.data.status) {
-                setSignedup(true);
-
                 let _token = response.data.auth._token;
                 let email = response.data.auth.email;
+                let name = response.data.auth.name;
+                let isTrader = response.data.auth.is_trader;
                 localStorage.setItem('_token', _token);
                 localStorage.setItem('email', email);
-                authContext.setAuth({_token, email});
-
+                localStorage.setItem('name', name);
+                localStorage.setItem('isTrader', isTrader);
                 history.push('/');
+                authContext.setAuth({
+                    'name': name,
+                    'email': email,
+                    'isTrader': isTrader,
+                    'authType': 'USER',
+                    'status': true,
+                });
                 alert.success(__('successLogin', 'messages'));
                 return true;
             } else {

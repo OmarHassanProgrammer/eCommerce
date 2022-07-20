@@ -22,9 +22,10 @@ class JWT extends BaseMiddleware
      */
     public function handle($request, Closure $next, $guard)
     {
+        
         $this->auth->parseToken()->authenticate();
         if(!auth()->guard($guard)->user()) {
-            return $this->returnError('E201', 'Not Authenticated');
+            return $this->returnError('E201', $guard);
         }
         return $next($request);
     }

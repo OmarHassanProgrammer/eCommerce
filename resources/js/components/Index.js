@@ -8,8 +8,8 @@ import {RegisterPage} from "./pages/auth/RegisterPage";
 import {LogoutPage} from "./pages/auth/LogoutPage";
 import {MainPage} from "./pages/MainPage";
 import {AuthProvider, AuthContext} from "./contexts/AuthContext";
+import {CategoriesProvider, CAtegoriesContext} from "./contexts/CategoriesContext";
 import Dashboard from "./pages/admin/dashboard";
-import {isAuthenticated} from "../helperFiles/auth";
 
 const options = {
     position: 'top right',
@@ -37,12 +37,14 @@ function Index() {
 
 function IndexWithProviders() {
     return (
-        <AuthProvider>
-            <AlertProvider template={AlertTemplate} {...options}>
-                <Index>
-                </Index>
-            </AlertProvider>
-        </AuthProvider>
+        <CategoriesProvider>
+            <AuthProvider>
+                <AlertProvider template={AlertTemplate} {...options}>
+                    <Index>
+                    </Index>
+                </AlertProvider>
+            </AuthProvider>
+        </CategoriesProvider>
     );
 }
 

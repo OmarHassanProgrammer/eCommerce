@@ -45,7 +45,7 @@ class UserController extends Controller
 
             $credentials = $request->only(['email', 'password']);
             $token = auth()->guard('user-api')->attempt($credentials);
-
+            
             if(!$token) {
                 return $this->returnError('E200', 'invalid email or password');
             }
@@ -54,6 +54,7 @@ class UserController extends Controller
 
             return $this->returnData('auth', $user);
         } catch (\Exception $error) {
+            return "sads";
             return $error;
             return $this->returnError('E001', 'there is some error');
         }
@@ -64,7 +65,7 @@ class UserController extends Controller
         $user->name = $request->name;
         $user->email = $request->email;
         $user->password = bcrypt($request->password);
-        $user->isTrader = ($request->isTrader? 1:0);
+        $user->is_trader = ($request->is_trader? 1:0);
         $user->save();
 
         $user->_token = auth()->tokenById($user->id);

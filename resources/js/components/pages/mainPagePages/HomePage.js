@@ -9,27 +9,18 @@ import {Carousel} from "react-responsive-carousel";
 
 export default function HomePage() {
     const authContext = useContext(AuthContext);
-    const [user, setUser, userRef] = useState({});
-
-    useEffect(() => {
-        me('ALL').then(r => {
-            if(r) {
-                setUser(r);
-            }
-        });
-    }, []);
 
     return (
         <div className="home-page">
             <CarouselComponent />
             <div className="wedgets">
                 {
-                    authContext.auth._token?
+                    authContext.authRef.current.status?
                         <div className="wedget col-4">
                             <div className="content">
                                 <div className="head">
                                     <h3 className="title">
-                                            Hi, { userRef.current.name }
+                                            Hi, { authContext.authRef.current.name }
                                     </h3>
                                 </div>
                                 <div className="body">

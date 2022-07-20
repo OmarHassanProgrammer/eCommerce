@@ -14,14 +14,12 @@ export function LoginPage() {
     let history = useHistory();
 
     useEffect(() => {
-        console.log(Object.keys(authContext.auth).length);
-        if(!loggedin) {
-            if (Object.keys(authContext.auth).length !== 0) {
-                alert.error(__("generalError", "messages"));
-                history.push('/');
-            }
+        console.log(authContext.authRef.current.status);
+        if(authContext.authRef.current.status) {
+            alert.error(__("alreadyLoggedIn", "messages"));
+            history.push('/');
         }
-    }, [Object.keys(authContext.auth).length]);
+    }, [authContext.auth.status]);
 
     let form = (props) => {
         return <form onSubmit={props.handleSubmit}>
@@ -49,18 +47,38 @@ export function LoginPage() {
         });
     }
 
-    function validateResponse(response) {
+    function validateResponse(response, authType) {
         if(response.status == 200) {
             if(response.data.status) {
                 setLoggedin(true);
 
                 let _token = response.data.auth._token;
                 let email = response.data.auth.email;
+                let name = response.data.auth.name;
                 localStorage.setItem('_token', _token);
                 localStorage.setItem('email', email);
-                authContext.setAuth({_token, email});
+                localStorage.setItem('name', name);
 
                 history.push('/');
+                if(authType === "USER") {
+                    let isTrader = response.data.auth.is_trader;
+                    localStorage.setItem('isTrader', isTrader);
+                    authContext.setAuth({
+                        'name': name,
+                        'email': email,
+                        'isTrader': isTrader,
+                        'authType': 'USER',
+                        'status': true,
+                    });
+                } else if (authType === "ADMIN") {
+                    authContext.setAuth({
+                        'name': name,
+                        'email': email,
+                        'authType': 'ADMIN',
+                        'status': true,
+                    });
+                }
+
                 alert.success(__('successLogin', 'messages'));
                 return true;
             } else {
@@ -91,7 +109,7 @@ export function LoginPage() {
                     },
                     method: "POST"
                 });
-                if (!validateResponse(response)) {
+                if (!validateResponse(response, 'USER')) {
                     let response = await axios.request({
                         url: "auth/admin/login",
                         baseURL: baseUrl,
@@ -102,7 +120,7 @@ export function LoginPage() {
                         },
                         method: "POST"
                     });
-                    if (!validateResponse(response)) {
+                    if (!validateResponse(response, 'ADMIN')) {
                         alert.error(__("errorEmailOrPassword", "messages"));
                     }
                 }

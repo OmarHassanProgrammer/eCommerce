@@ -14,7 +14,7 @@ class CategoryController extends Controller
 
     public function __construct() {
         $this->topCategories = [
-            20, 21, 22, 23, 24, 25, 26
+            1, 2, 3, 4, 5
         ];
     }
 

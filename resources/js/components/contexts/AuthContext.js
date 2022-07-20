@@ -11,35 +11,100 @@ export function AuthProvider(props) {
     function deleteAuth () {
         localStorage.removeItem('_token');
         localStorage.removeItem('email');
-        setAuth({});
+        localStorage.removeItem('isTrader');
+        localStorage.removeItem('authType');
+        setAuth({'status': false});
         console.log("deleted");
     }
 
-    async function run(_token) {
-        if(_token) {
-            await isAuthenticated('ALL').then(r => {
-                if(r) {
-                    setAuth({
-                        '_token': _token
-                    });
-                } else {
-                    deleteAuth();
-                    console.log("clear auth");
-                }
-            });
+    async function isAuthenticated() {
+        const _token = localStorage.getItem('_token');
+        let isAuthenticated = false;
+
+        const baseUrl = localStorage.getItem('host') + localStorage.getItem('api_extension');
+        console.log('1');
+
+        await axios.request({
+            url: "auth/user/me",
+            baseURL: baseUrl,
+            params: {
+                'api_password': localStorage.getItem('api_password'),
+                'token': _token
+            },
+            method: "GET"})
+        .then(response => {
+            console.log(response.data);
+            if(response.data.status) {
+                localStorage.setItem('name', response.data.auth.name);
+                localStorage.setItem('email', response.data.auth.email);
+                localStorage.setItem('isTrader', response.data.auth.id_trader);
+                localStorage.setItem('authType', 'USER'); 
+                isAuthenticated = true;
+
+                setAuth({
+                    'name': response.data.auth.name,
+                    'email': response.data.auth.email,
+                    'isTrader': response.data.auth.is_trader,
+                    'authType': 'USER',
+                    'status': true
+                });
+                console.log(auth);
+                console.log(authRef);
+            }
+        })
+        .catch(error => {
+            console.log(error.response);
+        });
+        
+        await axios.request({
+            url: "auth/admin/me",
+            baseURL: baseUrl,
+            params: {
+                'api_password': localStorage.getItem('api_password'),
+                'token': _token
+            },
+            method: "GET"
+        }).then(response => {
+            if(response.data.status) {
+                localStorage.setItem('name', response.data.auth.name);
+                localStorage.setItem('email', response.data.auth.email);
+                localStorage.setItem('authType', 'Admin');
+                isAuthenticated = true;
+
+                setAuth({
+                    'name': response.data.auth.name,
+                    'email': response.data.auth.email,
+                    'authType': 'ADMIN',
+                    'status': true
+                });
+            }
+        }).catch(error => {
+            console.log(error.response);
+        });
+
+        if(!isAuthenticated) {
+            deleteAuth();
+            return false;
         } else {
+            return "Nice";
         }
     }
 
     useEffect(() => {
-        const _token = localStorage.getItem('_token');
-        const email = localStorage.getItem('email');
+        
+        let checkAuthenticate = () => {
+            isAuthenticated().then(r => {
+                console.log(r);
+                console.log(auth);
+                console.log(authRef);
+            });
+        }
+        setInterval(checkAuthenticate, 30000);
+        checkAuthenticate();
 
-        run(_token);
+    }, []);
 
-    },[]);
-
-    return (<AuthContext.Provider value={{auth, setAuth, authRef, deleteAuth, run}}>
+    return (<AuthContext.Provider value={{auth, setAuth, authRef, deleteAuth, isAuthenticated}}>
         { props.children }
     </AuthContext.Provider>);
 }

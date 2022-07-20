@@ -2,7 +2,8 @@ import React, {useContext, useEffect} from 'react';
 import useState from 'react-usestateref';
 import {Link, Route, Switch, useHistory, useLocation, useRouteMatch} from "react-router-dom";
 import {AuthContext} from "../contexts/AuthContext";
-import {isAuthenticated, me} from "../../helperFiles/auth";
+import {CategoriesContext} from "../contexts/CategoriesContext";
+import {me} from "../../helperFiles/auth";
 import {Field, Formik, ErrorMessage} from "formik";
 import * as Yup from "yup";
 import axios from "axios";
@@ -12,6 +13,7 @@ import CategoryPage from "./mainPagePages/categoryPage";
 
 export function MainPage() {
     const authContext = useContext(AuthContext);
+    const categoriesContext = useContext(CategoriesContext);
     const [sidebarStatus, setSidebarStatus, sidebarStatusRef] = useState("");
     const [selectInputStatues, setSelectInputStatues, selectInputStatuesRef] = useState("");
     const [portfolioDropBoxStatus, setPortfolioDropBoxStatus, portfolioDropBoxStatusRef] = useState("");
@@ -19,43 +21,16 @@ export function MainPage() {
         id: '0',
         name: 'All'
     });
-    const [categories, setCategories, categoriesRef] = useState([]);
-    const [topCategories, setTopCategories, topCategoriesRef] = useState([]);
     const [user, setUser, userRef] = useState({});
-    const [isAdmin, setIsAdmin, isAdminRef] = useState(false);
     const history = useHistory();
     let { path, url } = useRouteMatch();
     let location = useLocation();
-    useEffect(() => {
-        isAuthenticated('ADMIN').then(r => {
-            if(r) {
-                setIsAdmin(true);
-            }
-        });
-
-    }, [authContext.auth]);
 
     useEffect(() => {
         const baseUrl = localStorage.getItem('host') + localStorage.getItem('api_extension');
         const _token = localStorage.getItem('_token');
 
-        async function getCategories() {
-            await axios.request({
-                url: "category/getAll",
-                baseURL: baseUrl,
-                params: {
-                    'api_password': localStorage.getItem('api_password'),
-                    'token': _token,
-                    'parentGroup': 'ALL',
-                    'pagination': 0
-                },
-                method: "GET"
-            })
-                .then(response => {
-                    setCategories(response.data);
-                });
-        }
-        getCategories();
+        console.log(categoriesContext.categories);
 
         document.addEventListener('click', (e) => {
             if (selectInputStatuesRef.current === "show2") {
@@ -70,28 +45,6 @@ export function MainPage() {
                 setPortfolioDropBoxStatus("");
             }
         });
-
-        me('ALL').then(r => {
-            console.log(r);
-            setUser(r);
-        });
-
-        async function getTopCategories() {
-            await axios.request({
-                url: "category/getTopCategories",
-                baseURL: baseUrl,
-                params: {
-                    'api_password': localStorage.getItem('api_password')
-                },
-                method: "GET"
-            })
-                .then(response => {
-                    console.log(response.data);
-                    setTopCategories(response.data);
-                });
-        }
-        getTopCategories();
-
     }, []);
 
     let handleSidebarStatus = () => {
@@ -178,8 +131,8 @@ export function MainPage() {
                     <select name="parentGroup" className="parent-group-input" value={values.category} onChange={handleChange} >
                         <option value="0" label="None" />
                         {
-                            categories !== []?
-                                categories.map((category, index) => (
+                            categoriesContext.categoriesRef.current !== []?
+                            categoriesContext.categoriesRef.current.map((category, index) => (
                                     <option value={category.id} label={category.name} key={index} />
                                 )) : ""
                         }
@@ -262,7 +215,7 @@ export function MainPage() {
                         <div className="image"></div>
                         <div className="name">
                             {
-                                authContext.auth._token?userRef.current.name:
+                                (authContext.authRef.current.status)?authContext.authRef.current.name:
                                     <div className="login-signup">
                                         Please <Link to="login" key="login">Log in</Link> or <Link to="register" key="register">Register</Link>
                                     </div>
@@ -284,8 +237,8 @@ export function MainPage() {
                             <div className="part-title">Shop By Category:</div>
                             <ul className="items">
                                 {
-                                    topCategoriesRef.current !== []?
-                                        topCategories.map((category, index) => (
+                                   categoriesContext.topCategoriesRef.current !== []?
+                                   categoriesContext.topCategoriesRef.current.map((category, index) => (
                                             <li className="item" key={index}>
                                                 <Link to={location => ({ ...location, pathname: `/category`, search: `?category_id=${category.id}`})} onClick={handleSidebarStatus}>
                                                     {category.name}
@@ -301,7 +254,7 @@ export function MainPage() {
                                 <li className="item">Your account</li>
                                 <li className="item">Settings</li>
                                 {
-                                    !authContext.auth._token?<li className="item">
+                                    !authContext.authRef.current?<li className="item">
                                         <Link to="login" key="login">Log in</Link>
                                     </li>:<li className="item">
                                             <Link className="link" to="logout" key="logout">logout</Link>
@@ -322,12 +275,12 @@ export function MainPage() {
                     </ul>
                     <ul className="right-list nav-list">
                         {
-                            !authContext.auth._token?<li className="item">
+                            !authContext.authRef.current.status?<li className="item">
                                 <Link to={location => ({ ...location, pathname: "/login" })} key="login">Log in</Link> or <Link  to={location => ({ ...location, pathname: "/register" })} key="register">Register</Link>
                                                     </li>:""
                         }
                         {
-                            isAdmin?<li className="item"><Link  to={location => ({ ...location, pathname: "/admin/dashboard" })} key="dashboard">Dashboard</Link></li>:""
+                            (authContext.authRef.current.authType === "ADMIN")?<li className="item"><Link  to={location => ({ ...location, pathname: "/admin/dashboard" })} key="dashboard">Dashboard</Link></li>:""
                         }
                         <li className="item"><a href="/">Daily Offers</a></li>
                         <li className="item"><a href="/">Buy what you need</a></li>
@@ -353,16 +306,16 @@ export function MainPage() {
                         </div>
                         <div className={"portfolio-icon " + (authContext.auth._token?"show":"")}>
                             <div className="content">
-                                Hi{!authContext.auth._token?
+                                Hi{!authContext.authRef.current.status?
                                 (<div className="login-signup">
-                                    ! <Link to={location => ({ ...location, pathname: "/login" })} key="login">Log in</Link> or <Link  to={location => ({ ...location, pathname: "/register" })} key="register">Register</Link>
+                                    <Link to={location => ({ ...location, pathname: "/login" })} key="login">Log in</Link> or <Link  to={location => ({ ...location, pathname: "/register" })} key="register">Register</Link>
                                 </div>):
                                 (<div className="portfolio-data">
-                                    <span className="name" onClick={handlePortfolioDropBoxStatus}>{". " + userRef.current.name}</span>
+                                    <span className="name" onClick={handlePortfolioDropBoxStatus}>{". " + authContext.authRef.current.name}</span>
                                     <div className={"drop-box " + portfolioDropBoxStatus} onClick={fixPortfolioDropBoxStatus}>
                                         <div className="head">
                                             <div className="user-logo"></div>
-                                            <div className="name">{ userRef.current.name }</div>
+                                            <div className="name">{ authContext.authRef.current.name }</div>
                                         </div>
                                         <div className="body">
                                             <Link className="link" to={location => ({ ...location, pathname: "logout"})} key="logout">logout</Link>
@@ -381,8 +334,8 @@ export function MainPage() {
                         <ul className="items">
                             <li className="item"><i className="fa fa-heart" aria-hidden="true"></i> favourite</li>
                             {
-                                topCategoriesRef.current !== []?
-                                    topCategories.map((category, index) => (
+                                categoriesContext.topCategoriesRef.current !== []?
+                                categoriesContext.topCategoriesRef.current.map((category, index) => (
                                         <li className="item" key={index}>
                                             <Link to={location => ({ ...location, pathname: `/category`, search: `?category_id=${category.id}`})}>
                                                 {category.name}
@@ -403,6 +356,6 @@ export function MainPage() {
                                    <CategoryPage />
                                )} />
                 </div>
-            </div>
+            </div>    
         </div>);
 }

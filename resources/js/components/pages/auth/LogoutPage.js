@@ -4,7 +4,7 @@ import {Redirect, useHistory} from 'react-router-dom';
 import {AuthContext} from "../../contexts/AuthContext";
 import {useAlert} from "react-alert";
 import axios from "axios";
-import {isAuthenticated} from "../../../helperFiles/auth";
+import {} from "../../../helperFiles/auth";
 
 
 export function LogoutPage() {
@@ -15,25 +15,24 @@ export function LogoutPage() {
 
     async function _logout(r) {
         if(r) {
-            await authContext.run(localStorage.getItem('_token')).then( async function() {
-                await axios.request({
-                    url: "/auth/user/logout",
-                    baseURL: url,
-                    params: {
-                        'api_password': localStorage.getItem('api_password'),
-                        'token': authContext.authRef.current._token
-                    },
-                    method: "GET"
-                }).then(response => {
-                    if (response.status == 200) {
-                        authContext.deleteAuth();
+            
+            await axios.request({
+                url: "/auth/user/logout",
+                baseURL: url,
+                params: {
+                    'api_password': localStorage.getItem('api_password'),
+                    'token': authContext.authRef.current._token
+                },
+                method: "GET"
+            }).then(response => {
+                if (response.status == 200) {
+                    authContext.deleteAuth();
 
-                        history.push('/');
-                        alert.success(__("successLogout", "messages"));
-                    } else {
-                        alert.error(__("generalError", "messages"));
-                    }
-                });
+                    history.push('/');
+                    alert.success(__("successLogout", "messages"));
+                } else {
+                    alert.error(__("generalError", "messages"));
+                }
             });
 
         } else {
@@ -44,7 +43,7 @@ export function LogoutPage() {
 
     function logout() {
         try {
-            isAuthenticated('ALL').then(r => {
+            authContext.isAuthenticated('ALL').then(r => {
                 _logout(r);
             });
         } catch(error) {
