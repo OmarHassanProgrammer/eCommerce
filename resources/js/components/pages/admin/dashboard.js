@@ -49,13 +49,9 @@ export default function Dashboard() {
     }, [rerenderHref]);
 
     useEffect(() => {
-        me('ADMIN').then(r => {
-            if(!r) {
-                history.push('/');
-            } else {
-                setAdmin(r);
-            }
-        });
+        if(authContext.authRef.current.authType !== 'ADMIN') {
+            history.push('/');
+        }
 
     }, [authContext.auth]);
 

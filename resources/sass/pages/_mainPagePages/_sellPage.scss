@@ -1,0 +1,117 @@
+.sell-page {
+    height: 3000px;
+    .sec1 {
+        height: 400px;
+        display: flex;
+        .left, .right {
+            width: 50%
+        }
+        .left {
+            position: relative;
+            .text {
+                position: absolute;
+                left: 5%;
+                top: 21%;
+                .title {
+                    font-size: 4rem;
+                    font-weight: 700;
+                }
+                .btn {
+                    background-color: $orange1;
+                    border-radius: 15px;
+                    font-size: 1.3rem;
+                    font-weight: bold;
+                    padding: 7px 30px;
+                    margin-top: 5px;
+                }
+            }   
+        }
+        .right {
+            .image {
+                width: 100%;
+                text-align: center;
+                img {
+                    height: 400px;;
+                }
+            }
+        }
+    }
+    .sec2 {
+        padding: 50px 30px;
+        display: flex;
+        height: 400px;
+        .left {
+            width: 37%;
+            .image {
+                align-items: center;
+                img {
+                    height: 360px;
+                }
+            }
+        }
+        .right {
+            width: 63%;
+            padding-top: 16px;
+            .title {
+                font-size: 3rem;
+                font-weight: bold;
+            }
+            .advantages {
+                list-style: circle;
+                padding: 0;
+                font-size: 1.1rem;
+                margin: 20px 0 0 17px;
+            }
+        }
+    }
+    .sec3 {
+        display: flex;
+        padding: 70px 30px 0 35px;
+        justify-content: space-between;
+        .block {
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            box-shadow: 1px 1px 8px 2px #ddd;
+            width: 30%;
+            padding: 20px 30px;
+            .title {
+                font-size: 1.5rem;
+                font-weight: bold;
+            }
+            .content {
+                padding-top: 10px;
+                color: #777;
+            }
+        }
+    }
+    .sec4 {
+        padding: 40px 30px 0 35px;
+        .title {
+            font-size: 3.5rem;
+            text-align: center;
+            font-weight: bold;
+        }
+        .blocks {
+            padding-top: 50px;
+            display: flex;
+            justify-content: space-between;   
+            flex-wrap: wrap; 
+            .block {
+                border: 1px solid #ddd;
+                border-radius: 20px;
+                box-shadow: 1px 1px 8px 2px #ddd;
+                width: 30%;
+                padding: 20px 30px;
+                margin-bottom: 20px;
+                .title {
+                    font-size: 1.5rem;
+                    font-weight: bold;
+                }
+                .content {
+                    padding-top: 10px;
+                    color: #777;
+                }
+            }
+        }
+    }
+}

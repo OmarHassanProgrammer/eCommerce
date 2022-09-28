@@ -37,7 +37,7 @@ export function AuthProvider(props) {
             if(response.data.status) {
                 localStorage.setItem('name', response.data.auth.name);
                 localStorage.setItem('email', response.data.auth.email);
-                localStorage.setItem('isTrader', response.data.auth.id_trader);
+                localStorage.setItem('isTrader', response.data.auth.is_trader);
                 localStorage.setItem('authType', 'USER'); 
                 isAuthenticated = true;
 
@@ -45,6 +45,10 @@ export function AuthProvider(props) {
                     'name': response.data.auth.name,
                     'email': response.data.auth.email,
                     'isTrader': response.data.auth.is_trader,
+                    'number': response.data.auth.number,
+                    'postal_code': response.data.auth.postal_code,
+                    'email_verified_at': response.data.auth.email_verified_at,
+                    'number_verified_at': response.data.auth.number_verified_at,
                     'authType': 'USER',
                     'status': true
                 });
@@ -99,7 +103,7 @@ export function AuthProvider(props) {
                 console.log(authRef);
             });
         }
-        setInterval(checkAuthenticate, 30000);
+        setInterval(checkAuthenticate, 300000);
         checkAuthenticate();
 
     }, []);

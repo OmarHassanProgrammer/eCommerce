@@ -9,7 +9,15 @@ import * as Yup from "yup";
 import axios from "axios";
 import Categories from "../subComponents/Categories";
 import HomePage from "./mainPagePages/HomePage";
-import CategoryPage from "./mainPagePages/categoryPage";
+import CategoryPage from "./mainPagePages/CategoryPage";
+import ProductPage from "./mainPagePages/ProductPage";
+import SellPage from "./mainPagePages/SellPage";
+import AccountPage from "./mainPagePages/AccountPage";
+import DataAndSecurityPage from './accountPages/dataAndSecurity';
+import SellSettingsPage from './accountPages/sellingSettings';
+import CartPage from './mainPagePages/CartPage';
+import MainSellPage from './selling/MainSellPage';
+import InfoSellPage from './selling/InfoSellPage';
 
 export function MainPage() {
     const authContext = useContext(AuthContext);
@@ -131,7 +139,7 @@ export function MainPage() {
                     <select name="parentGroup" className="parent-group-input" value={values.category} onChange={handleChange} >
                         <option value="0" label="None" />
                         {
-                            categoriesContext.categoriesRef.current !== []?
+                            (Object.keys(categoriesContext.categoriesRef.current).length > 0)?
                             categoriesContext.categoriesRef.current.map((category, index) => (
                                     <option value={category.id} label={category.name} key={index} />
                                 )) : ""
@@ -237,7 +245,7 @@ export function MainPage() {
                             <div className="part-title">Shop By Category:</div>
                             <ul className="items">
                                 {
-                                   categoriesContext.topCategoriesRef.current !== []?
+                                   (Object.keys(categoriesContext.topCategoriesRef.current).length > 0)?
                                    categoriesContext.topCategoriesRef.current.map((category, index) => (
                                             <li className="item" key={index}>
                                                 <Link to={location => ({ ...location, pathname: `/category`, search: `?category_id=${category.id}`})} onClick={handleSidebarStatus}>
@@ -284,7 +292,7 @@ export function MainPage() {
                         }
                         <li className="item"><a href="/">Daily Offers</a></li>
                         <li className="item"><a href="/">Buy what you need</a></li>
-                        <li className="item"><a href="/">Sell with us</a></li>
+                        <li className="item"><Link to={location => ({ ...location, pathname: "/sell-info" })}>Sell with us</Link></li>
                         <li className="item"><a href="/">English</a></li>
 
                     </ul>
@@ -318,7 +326,8 @@ export function MainPage() {
                                             <div className="name">{ authContext.authRef.current.name }</div>
                                         </div>
                                         <div className="body">
-                                            <Link className="link" to={location => ({ ...location, pathname: "logout"})} key="logout">logout</Link>
+                                            <Link className="link" to={location => ({ ...location, pathname: "./account"})} key="account">Your Account</Link>
+                                            <Link className="link" to={location => ({ ...location, pathname: "./logout"})} key="logout">logout</Link>
                                         </div>
                                     </div>
                                 </div>)
@@ -326,7 +335,7 @@ export function MainPage() {
                             </div>
                         </div>
                         <div className="shopping-cart">
-                            <i className="fa fa-shopping-cart" aria-hidden="true"></i>
+                            <Link to={location => ({ ...location, pathname: `/cart`})}><i className="fa fa-shopping-cart" aria-hidden="true"></i></Link>
                         </div>
                     </div>
                 </div>
@@ -334,7 +343,7 @@ export function MainPage() {
                         <ul className="items">
                             <li className="item"><i className="fa fa-heart" aria-hidden="true"></i> favourite</li>
                             {
-                                categoriesContext.topCategoriesRef.current !== []?
+                                (Object.keys(categoriesContext.topCategoriesRef.current).length > 0)?
                                 categoriesContext.topCategoriesRef.current.map((category, index) => (
                                         <li className="item" key={index}>
                                             <Link to={location => ({ ...location, pathname: `/category`, search: `?category_id=${category.id}`})}>
@@ -355,6 +364,38 @@ export function MainPage() {
                                render={() => (
                                    <CategoryPage />
                                )} />
+                        <Route path={`/sell-info`}
+                                render={() => (
+                                    <SellPage />
+                                )} />
+                        <Route path={`/product`}
+                                render={() => (
+                                    <ProductPage />
+                                )} />
+                        <Route path={`/account/data`}
+                                render={() => (
+                                    <DataAndSecurityPage />
+                                )} />
+                        <Route path={`/account/sell-settings`}
+                                render={() => (
+                                    <SellSettingsPage />
+                                )} />
+                        <Route path={`/account`} exact
+                                render={() => (
+                                    <AccountPage />
+                                )} />
+                        <Route path={`/sell`} exact
+                                render={() => (
+                                    <MainSellPage />
+                                )} />
+                        <Route path={`/info-sell-page`} exact
+                                render={() => (
+                                    <InfoSellPage />
+                                )} />
+                        <Route path={`/cart`} exact
+                                render={() => (
+                                    <CartPage />
+                                )} />
                 </div>
             </div>    
         </div>);

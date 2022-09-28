@@ -18,6 +18,7 @@ class ProductController extends Controller
     public $i = 0;
 
     public function __construct() {
+        $this->middleware('jwt:user-api', ['only' => ['createProduct']]);
     }
 
     public function getProducts(Request $request) {
@@ -141,6 +142,9 @@ class ProductController extends Controller
 
     public function getProduct($id) {
         $product = Product::find($id);
+        $product->trader = $product->trader();
+        $product->category = $product->category();
+        $product->brand = $product->brand();
 
         return $this->returnData('product', $product);
     }
@@ -160,15 +164,40 @@ class ProductController extends Controller
         }
     }
 
-    public function addCategory(Request $request) {
+    public function createProduct(Request $request) {
+
+       // return $this->returnData('photos', ($request->get('photos')));
+
         try {
+
             $product = new Product();
             $product->name = $request->name;
-            $product->trader = $request->trader;
+            $product->trader = auth()->guard('user-api')->user()->id;
             $product->category = $request->category;
+            $product->brand_id = $request->brand;
             $product->price = $request->price;
             $product->quantity = $request->quantity;
+            $product->location = $request->location;
+            $product->description = $request->description;
+            $product->photos = "dd";
+
+            $data = [];
+            if ($request->get('photos')) {
+
+                foreach($request->get('photos') as $image) {
+                    $name = $request->name . '-image-' . explode('/', explode(':', substr($image, 0, strpos($image, ';')))[1])[1];
+                    \Image::make($image)->save(public_path('images/') . $name);
+                    array_push($data, $name);
+
+                    $image->move(public_path('product_images/' . $product->id, $imageName));
+                    $product->photo = $product->photo . $imageName . ',';
+                    return("ff");
+                }
+            }
+            $image = json_encode($data);
+
             $product->save();
+            
 
             return $this->returnData('product', $product);
         } catch (\Exception $error) {
@@ -177,7 +206,7 @@ class ProductController extends Controller
         }
     }
 
-    public function updateCategory(Request $request) {
+    public function updateProduct(Request $request) {
         $product = Product::find($request->id);
         $product->name = $request->name;
         $product->parent_group = $request->parentGroup;
@@ -186,7 +215,7 @@ class ProductController extends Controller
         return $this->returnData("category", $product);
     }
 
-    public function deleteCategory($id) {
+    public function deleteProduct($id) {
         $product = Product::find($id);
         $product->delete();
 

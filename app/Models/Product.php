@@ -20,9 +20,16 @@ class Product extends Model
 
     public function brand()
     {
-        return $this->belongsTo(Brand::class);
+        return Brand::find($this->brand_id);;
     }
-
+    public function trader()
+    {
+        return User::find($this->trader);
+    }
+    public function category()
+    {
+        return Category::find($this->category);
+    }
     public function rates() {
         return $this->hasMany(Rate::class);
     }

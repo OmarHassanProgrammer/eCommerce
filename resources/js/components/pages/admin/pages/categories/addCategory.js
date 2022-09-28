@@ -22,11 +22,9 @@ export default function AddCategory(props) {
     const authContext = useContext(AuthContext);
 
     useEffect(() => {
-        me('ADMIN').then(r => {
-            if(!r) {
-                history.push('/');
-            }
-        });
+        if(authContext.authRef.current.authType !== 'ADMIN') {
+            history.push('/');
+        }
 
     }, [authContext.auth]);
 

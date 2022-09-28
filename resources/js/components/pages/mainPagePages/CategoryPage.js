@@ -27,11 +27,6 @@ export default function CategoryPage() {
     const history = useHistory();
 
     useEffect(() => {
-        me('ALL').then(r => {
-            if(r) {
-                setUser(r);
-            }
-        });
 
         async function getCategory() {
             const baseUrl = localStorage.getItem('host') + localStorage.getItem('api_extension');
@@ -131,7 +126,7 @@ export default function CategoryPage() {
         async function getProducts() {
             const baseUrl = localStorage.getItem('host') + localStorage.getItem('api_extension');
             await axios.request({
-                url: `product/getCategoryProducts/${categoryId}/`,
+                url: `product/getCategoryProducts/${categoryId}`,
                 baseURL: baseUrl,
                 params: {
                     'api_password': localStorage.getItem('api_password'),
@@ -242,6 +237,9 @@ export default function CategoryPage() {
                             }
                         }
                     }
+                })
+                .catch((response) => {
+                    console.log("errror", response);
                 });
         }
         getProducts();
@@ -330,7 +328,7 @@ export default function CategoryPage() {
         window.history.pushState(null, "", location.pathname + newSearch);
         location.search = newSearch;
     }
-
+    
     return (
         <div className="category-page">
             <div className="side-bar">
@@ -465,13 +463,15 @@ export default function CategoryPage() {
             <div className="content">
                 <div className="products">
                     {
-                        (productsPagination.data && productsPagination.data !== {})?
-                            Object.values(productsPagination.data).map((product, index) => (
-                                <div className="product" key={index}>
+                        (productsPagination.data !== undefined?
+                        Object.values(productsPagination.data).map((product, index) => (
+                            <div className="product" key={index}>
+                                    <Link className='link' to={location => ({ ...location, pathname: `/product`, search: `?product_id=${product.id}`})}>
+                                    </Link>
                                     <div className="image">
                                         <img src={ product.logo } />
                                     </div>
-
+                                    
                                     <div className="middle">
                                         <div className="name">
                                             { product.name }
@@ -484,7 +484,7 @@ export default function CategoryPage() {
                                         <div className="rate">
                                             {
                                                 product.rate == 5?
-                                                    <div className="stars">
+                                                <div className="stars">
                                                         <span className="star fill"></span>
                                                         <span className="star fill"></span>
                                                         <span className="star fill"></span>
@@ -582,9 +582,8 @@ export default function CategoryPage() {
                                     <div className="price">
                                         <span className="dollar-sign">$</span>{product.price}
                                     </div>
-
                                 </div>
-                            )):""
+                            )):"")
                     }
                 </div>
                 {

@@ -22,10 +22,10 @@ class CheckPassword
         $api_password = $request->route("api_password");
 
         if(!isset($request->api_password)) {
-            return $this->returnError('E002', $errorMsg, $request->_token);
+            return $this->returnError('E002', $errorMsg, $request->file('photos'));
         }
         if($request->api_password != env("API_PASSWORD", "e8tGHfbfIwJ5Yp0XNpK21QIHFAC")) {
-            return $this->returnError('E002', $errorMsg);
+            return $this->returnError('E002', $errorMsg, $request);
         }
         return $next($request);
     }

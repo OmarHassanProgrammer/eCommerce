@@ -11,6 +11,7 @@ export function RegisterPage() {
     const authContext = useContext(AuthContext);
     const alert = useAlert();
     let history = useHistory();
+    const trader = getQueryParam('trader', 0);
 
 
     useEffect(() => {
@@ -114,7 +115,7 @@ export function RegisterPage() {
                     return true;
                 }
 
-                console.log(values.trader);
+                console.log("isTrader", values.trader);
 
                 let response = await axios.request({
                     url: "auth/user/register",
@@ -156,7 +157,7 @@ export function RegisterPage() {
         <div className="register-form">
             <h2 className="title">Register</h2>
             <Formik
-                initialValues={{name: "", email: "", password: "", cPassword: "", trader: ""}}
+                initialValues={{name: "", email: "", password: "", cPassword: "", trader: trader}}
                 onSubmit={onSubmit}
                 render={form}
                 validationSchema={schema()} />

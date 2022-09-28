@@ -19,6 +19,12 @@ Route::group(['namespace' => 'Auth', 'prefix' => 'auth'], function() {
         Route::get('getUsers', 'UserController@getUsers');
         Route::post('login', 'UserController@login');
         Route::post('register', 'UserController@register');
+        Route::post('update', 'UserController@update');
+        Route::get('getCart', 'UserController@getCart');
+        Route::post('addToCart', 'UserController@addToCart');
+        Route::post('deleteFromCart', 'UserController@deleteFromCart');
+        Route::post('updateQty', 'UserController@updateQty');
+        Route::post('isInCart', 'UserController@isInCart');
         Route::get('me', 'UserController@me');
         Route::get('logout', 'UserController@logout');
         Route::get('refresh', 'UserController@refresh');
@@ -44,8 +50,10 @@ Route::group(['prefix' => 'product'], function() {
     Route::get('getAll', 'ProductController@getProducts');
     Route::get('get/{id}', 'ProductController@getProduct');
     Route::get('getCategoryProducts/{id}', 'ProductController@getCategoryProducts');
-    Route::get('getCategoryProducts/{id}/{first_loop}', 'ProductController@getCategoryProducts');
-    Route::post('add', 'ProductController@addProduct');
-    Route::post('edit', 'ProductController@update');
-    Route::get('delete', 'ProductController@delete');
+    Route::post('create', 'ProductController@createProduct');
+    Route::post('edit', 'ProductController@updateProduct');
+    Route::get('delete', 'ProductController@deleteProduct');
+});
+Route::group(['prefix' => 'brand'], function () {
+    Route::get('getAll', 'BrandController@getBrands');
 });

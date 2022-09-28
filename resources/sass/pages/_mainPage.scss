@@ -1,5 +1,5 @@
 .main-page {
-    background-color: #e7e7e7;
+    background-color: #fff;
     min-height: 100vh;
     .sidebar {
         width: 100vw;
@@ -469,6 +469,12 @@
                 vertical-align: middle;
                 margin-left: 15px;
                 font-size: 2rem;
+                a {
+                    color: #333;
+                    &:hover {
+                        color: #000;
+                    }
+                }
             }
         }
     }
@@ -479,6 +485,7 @@
             padding: 0;
             display: flex;
             justify-content: space-between;
+            margin-bottom: 0;
             .item, .item a {
                 display: inline-block;
                 color: #555;
@@ -494,5 +501,12 @@
     .content {
         @import "_mainPagePages/homePage";
         @import "_mainPagePages/categoryPage";
+        @import "_mainPagePages/productPage";
+        @import "_mainPagePages/sellPage";
+        @import "_mainPagePages/accountPage";
+        @import "_mainPagePages/dataAndSecurityPage";
+        @import "_mainPagePages/cartPage";
+        @import "_mainPagePages/mainSellPage";
+        @import "_mainPagePages/infoSellPage";
     }
 }

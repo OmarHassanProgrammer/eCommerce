@@ -9,6 +9,7 @@ import {LogoutPage} from "./pages/auth/LogoutPage";
 import {MainPage} from "./pages/MainPage";
 import {AuthProvider, AuthContext} from "./contexts/AuthContext";
 import {CategoriesProvider, CAtegoriesContext} from "./contexts/CategoriesContext";
+import { MainSellPage } from './pages/selling/MainSellPage';
 import Dashboard from "./pages/admin/dashboard";
 
 const options = {
@@ -25,7 +26,7 @@ function Index() {
             <div className="App">
                 <Switch>
                     <Route path="/login" exact component={LoginPage} />
-                    <Route path="/register" exact component={RegisterPage} />
+                    <Route path="/register/" component={RegisterPage} />
                     <Route path="/logout" exact component={LogoutPage} />
                     <Route path="/admin/dashboard/" component={Dashboard} />
                     <Route path="/" component={MainPage} />
